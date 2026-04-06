@@ -18,14 +18,15 @@ public class LaserManager : MonoBehaviour
     {
         steff = FindObjectOfType<SteffScript>();
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "Laser";
-        bool isEquipped = PlayerPrefs.GetInt("HasLaserItem", 0) == 1 && PlayerPrefs.GetString("ActiveItem", "") == "Laser";
+        bool isEquipped   = !RankedManager.IsRanked && PlayerPrefs.GetInt("HasLaserItem", 0) == 1 && PlayerPrefs.GetString("ActiveItem", "") == "Laser";
         laserUI.SetActive(isEquipped || isRankedItem);
     }
 
     void Update()
     {
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "Laser";
-        if (PlayerPrefs.GetString("ActiveItem", "") != "Laser" && !isRankedItem) return;
+        bool isActiveItem = !RankedManager.IsRanked && PlayerPrefs.GetString("ActiveItem", "") == "Laser";
+        if (!isRankedItem && !isActiveItem) return;
 
         HandleCooldownUI();
 

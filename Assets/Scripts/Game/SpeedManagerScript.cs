@@ -2,16 +2,17 @@ using UnityEngine;
 
 public class SpeedManager : MonoBehaviour
 {
-    public static float currentSpeed { get; private set; } = 5f;
+    public const  float startSpeed   = 5f;
+    public static float currentSpeed { get; private set; } = startSpeed;
     public static float acceleration = 0.1f;
-    public static float maxSpeed = 15f; // Beispielwert, passt du nach Bedarf an
+    public static float maxSpeed = 15f;
 
     void Awake()
     {
         // Sicherstellen, dass es nur eine Instanz gibt
         if (FindObjectsOfType<SpeedManager>().Length > 1)
         {
-            Debug.LogWarning("Mehrere SpeedManager vorhanden – das sollte nicht passieren!");
+            Debug.LogWarning("Mehrere SpeedManager vorhanden ï¿½ das sollte nicht passieren!");
         }
     }
 
@@ -23,7 +24,7 @@ public class SpeedManager : MonoBehaviour
 
     public static void ResetSpeed()
     {
-        currentSpeed = 5f;
+        currentSpeed = startSpeed;
     }
 
 }

@@ -47,6 +47,9 @@ public class ItemShopHandler : MonoBehaviour
 
     void Start()
     {
+        if (!PlayerPrefs.HasKey("ActiveSkin"))
+            PlayerPrefs.SetString("ActiveSkin", "benjo-bird");
+
         GenerateCards(items,  itemsContent,  "ActiveItem");
         GenerateCards(trails, trailsContent, "ActiveTrail");
         GenerateCards(skins,  skinsContent,  "ActiveSkin");

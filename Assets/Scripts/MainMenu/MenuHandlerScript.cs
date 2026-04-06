@@ -24,8 +24,12 @@ public class MenuHandlerScript : MonoBehaviour
     [SerializeField] private Image indicatorPlayQuickplay;
     [SerializeField] private Image indicatorPlayRanked;
     [SerializeField] private GameObject pnlRankedInfo;
+    [SerializeField] private Image imgRankedItem;
     [SerializeField] private TMPro.TMP_Text txtRankedItem;
     [SerializeField] private TMPro.TMP_Text txtRankedReset;
+    [SerializeField] private Sprite spriteInvincible;
+    [SerializeField] private Sprite spriteShrink;
+    [SerializeField] private Sprite spriteLaser;
 
     [Header("Scoreboard-Bar")]
     [SerializeField] private Button btnScoreQuickplay;
@@ -36,6 +40,14 @@ public class MenuHandlerScript : MonoBehaviour
     private readonly Color colorActive   = new Color(0.13f, 0.77f, 0.37f, 1f); // #22C55E
     private readonly Color colorInactive = new Color(0.33f, 0.33f, 0.33f, 1f); // #555555
     private System.Threading.CancellationTokenSource _scoreCts;
+
+    [ContextMenu("Add Cannabis")]
+    void DebugAddCannabis()
+    {
+        PlayerPrefs.SetInt("CannabisStash", 9999);
+        PlayerPrefs.Save();
+    }
+
 
     public void StartGame()
     {
@@ -157,7 +169,19 @@ public class MenuHandlerScript : MonoBehaviour
     private void InitRankedInfo()
     {
         if (txtRankedItem != null)
-            txtRankedItem.text = "Item: " + RankedManager.GetWeeklyItemDisplayName();
+            txtRankedItem.text = RankedManager.GetWeeklyItemDisplayName();
+
+        if (imgRankedItem != null)
+        {
+            imgRankedItem.sprite = RankedManager.WeeklyItem switch
+            {
+                "Invincible" => spriteInvincible,
+                "Shrink"     => spriteShrink,
+                "Laser"      => spriteLaser,
+                _            => null
+            };
+        }
+
         UpdateRankedResetText();
     }
 

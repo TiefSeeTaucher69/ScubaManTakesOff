@@ -43,6 +43,7 @@ public class HoverDropdown : MonoBehaviour
 
     public void OnEnterTrigger()
     {
+        if (!gameObject.activeInHierarchy) return;
         if (_hideRoutine != null) { StopCoroutine(_hideRoutine); _hideRoutine = null; }
         if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
         _fadeRoutine = StartCoroutine(Fade(1f));
@@ -50,6 +51,7 @@ public class HoverDropdown : MonoBehaviour
 
     public void OnExitTrigger()
     {
+        if (!gameObject.activeInHierarchy) return;
         if (_hideRoutine != null) StopCoroutine(_hideRoutine);
         _hideRoutine = StartCoroutine(DelayedHide());
     }

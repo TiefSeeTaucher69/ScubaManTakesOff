@@ -1,0 +1,147 @@
+using Assets.FantasyMonsters.Scripts;
+using UnityEngine;
+
+public class PetCompanionScript : MonoBehaviour
+{
+    private enum State { Following, Seeking, Attacking, Returning }
+
+    private float _detectionRadius = 12f;
+    private float _seekSpeed       = 28f;
+    private float _smoothTime      = 0.25f;
+    private float _attackDuration  = 0.6f;
+    private float _scale           = 0.25f;
+    private static readonly Vector3 Offset = new(-1.8f, 0f, 0f);
+
+    private Monster    _monster;
+    private LogicScript _logic;
+    private SteffScript _steff;
+    private Transform               _leafTransform;
+    private GameObject              _leafGO;
+    private CannabisCollisionScript _leafCollision; // gecacht um GetComponent in Attack zu vermeiden
+    private State      _state;
+    private float      _attackTimer;
+    private Vector3    _velocity;
+
+    public void Init(SteffScript steff, LogicScript logic, float detectionRadius, float seekSpeed)
+    {
+        _steff           = steff;
+        _logic           = logic;
+        _detectionRadius = detectionRadius;
+        _seekSpeed       = seekSpeed;
+        _monster         = GetComponent<Monster>();
+
+        foreach (var c in GetComponentsInChildren<Collider2D>())
+            c.enabled = false;
+
+        // Immer nach rechts schauen — kein Flippen
+        transform.localScale = new Vector3(-_scale, _scale, 1f);
+        _monster?.SetState(MonsterState.Walk);
+    }
+
+    void Update()
+    {
+        if (_steff == null || !_steff.steffIsAlive) return;
+
+        switch (_state)
+        {
+            case State.Following: Follow(); Scan(); break;
+            case State.Seeking:   Seek();           break;
+            case State.Attacking: Attack();         break;
+            case State.Returning: Return();         break;
+        }
+    }
+
+    void Follow() => SmoothMove(_steff.transform.position + Offset);
+
+    void Return()
+    {
+        SmoothMove(_steff.transform.position + Offset);
+        if (Near(_steff.transform.position + Offset, 0.5f))
+            _state = State.Following;
+    }
+
+    void Seek()
+    {
+        // Blatt wurde von Spieler eingesammelt oder ist verschwunden
+        if (_leafGO == null) { _state = State.Following; return; }
+
+        // Jedes Frame aktuelle Weltposition lesen — Blatt bewegt sich
+        Vector3 leafPos = _leafTransform.position;
+
+        transform.position = Vector3.MoveTowards(transform.position, leafPos, _seekSpeed * Time.deltaTime);
+
+        if (Near(leafPos, 1.2f))
+        {
+            _attackTimer = _attackDuration;
+            _monster?.Attack();
+            _state = State.Attacking;
+        }
+    }
+
+    void Attack()
+    {
+        // Blatt mitverfolgen während Animation — sonst bleibt Pet stehen während Blatt weiterfliegt
+        if (_leafGO != null && _leafTransform != null)
+            transform.position = Vector3.MoveTowards(transform.position, _leafTransform.position, _seekSpeed * Time.deltaTime);
+
+        _attackTimer -= Time.deltaTime;
+        if (_attackTimer > 0f) return;
+
+        if (_leafGO != null)
+        {
+            // CannabisCollisionScript deaktivieren damit Spieler nicht gleichzeitig auch scored
+            if (_leafCollision != null) _leafCollision.enabled = false;
+
+            _logic.addCannabisScore(1);
+            // Root (Parent des Child) zerstören → killt Root + Child komplett
+            var root = _leafGO.transform.parent != null
+                ? _leafGO.transform.parent.gameObject
+                : _leafGO;
+            Destroy(root);
+        }
+        _leafGO        = null;
+        _leafTransform = null;
+        _leafCollision = null;
+
+        _monster?.SetState(MonsterState.Walk);
+        _state = State.Returning;
+    }
+
+    void Scan()
+    {
+        GameObject bestGO = null;
+        Transform  bestT  = null;
+        float      min    = _detectionRadius;
+
+        // CannabisCollisionScript sitzt auf dem Child (cannabis_0) — das ist die sichtbare
+        // Blatt-Position. CannabisMovementScript sitzt auf dem Root, der ~10 Einheiten daneben liegt.
+        foreach (var l in FindObjectsByType<CannabisCollisionScript>(FindObjectsSortMode.None))
+        {
+            // Nur Blätter die noch rechts vom Pet sind (die anderen fliegen schon vorbei)
+            if (l.transform.position.x < transform.position.x - 2f) continue;
+
+            float d = Vector3.Distance(transform.position, l.transform.position);
+            if (d < min)
+            {
+                min    = d;
+                bestGO = l.gameObject;  // Child-GO → wird beim Spieler-Einsammeln zerstört
+                bestT  = l.transform;   // Child-Transform → korrekte Weltposition
+            }
+        }
+
+        if (bestGO == null) return;
+
+        _leafGO        = bestGO;
+        _leafTransform = bestT;
+        _leafCollision = bestGO.GetComponent<CannabisCollisionScript>();
+        _monster?.SetState(MonsterState.Run);
+        _state = State.Seeking;
+    }
+
+    void SmoothMove(Vector3 target)
+    {
+        transform.position = Vector3.SmoothDamp(transform.position, target, ref _velocity, _smoothTime);
+    }
+
+    bool Near(Vector3 p, float r) => Vector3.Distance(transform.position, p) < r;
+}

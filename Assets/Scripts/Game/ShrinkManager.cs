@@ -22,14 +22,15 @@ public class ShrinkManager : MonoBehaviour
         steff = FindObjectOfType<SteffScript>();
 
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "Shrink";
-        bool isEquipped = PlayerPrefs.GetInt("HasShrinkItem", 0) == 1 && PlayerPrefs.GetString("ActiveItem", "") == "Shrink";
+        bool isEquipped   = !RankedManager.IsRanked && PlayerPrefs.GetInt("HasShrinkItem", 0) == 1 && PlayerPrefs.GetString("ActiveItem", "") == "Shrink";
         shrinkUI.SetActive(isEquipped || isRankedItem);
     }
 
     void Update()
     {
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "Shrink";
-        if (PlayerPrefs.GetString("ActiveItem", "") != "Shrink" && !isRankedItem) return;
+        bool isActiveItem = !RankedManager.IsRanked && PlayerPrefs.GetString("ActiveItem", "") == "Shrink";
+        if (!isRankedItem && !isActiveItem) return;
         HandleCooldownUI();
 
         if (steff != null && !steff.steffIsAlive) return;

@@ -22,14 +22,15 @@ public class InvincibilityManager : MonoBehaviour
         steff = FindObjectOfType<SteffScript>();
 
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "Invincible";
-        bool isEquipped = PlayerPrefs.GetInt("HasInvincibleItem", 0) == 1 && PlayerPrefs.GetString("ActiveItem", "") == "Invincible";
+        bool isEquipped   = !RankedManager.IsRanked && PlayerPrefs.GetInt("HasInvincibleItem", 0) == 1 && PlayerPrefs.GetString("ActiveItem", "") == "Invincible";
         invincibilityUI.SetActive(isEquipped || isRankedItem);
     }
 
     void Update()
     {
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "Invincible";
-        if (PlayerPrefs.GetString("ActiveItem", "") != "Invincible" && !isRankedItem) return;
+        bool isActiveItem = !RankedManager.IsRanked && PlayerPrefs.GetString("ActiveItem", "") == "Invincible";
+        if (!isRankedItem && !isActiveItem) return;
         HandleCooldownUI();
 
         if (steff != null && !steff.steffIsAlive) return;

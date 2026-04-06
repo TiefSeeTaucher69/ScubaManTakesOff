@@ -16,16 +16,17 @@ public class MusicPlayerScript : MonoBehaviour
     void Update()
     {
         if (!audioSource.isPlaying)
-        {
             PlayRandomSong();
-        }
+
+        float t = Mathf.InverseLerp(SpeedManager.startSpeed, SpeedManager.maxSpeed, SpeedManager.currentSpeed);
+        audioSource.pitch = Mathf.Lerp(1f, 1.5f, t);
     }
 
     void PlayRandomSong()
     {
         if (songs.Count == 0) return;
 
-        // Optional: Alle Songs wurden gespielt, Liste zurücksetzen
+        // Optional: Alle Songs wurden gespielt, Liste zurï¿½cksetzen
         if (playedIndices.Count >= songs.Count)
         {
             playedIndices.Clear();

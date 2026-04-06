@@ -11,7 +11,6 @@ public class CannabisMovementScript : MonoBehaviour
 
         if (transform.position.x < deadZone)
         {
-            Debug.Log("Cannabis deleted");
             Destroy(gameObject);
         }
     }
