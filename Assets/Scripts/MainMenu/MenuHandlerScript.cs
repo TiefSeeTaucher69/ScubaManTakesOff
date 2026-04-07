@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -37,8 +38,12 @@ public class MenuHandlerScript : MonoBehaviour
     [SerializeField] private Image indicatorScoreQuickplay;
     [SerializeField] private Image indicatorScoreRanked;
 
-    private readonly Color colorActive   = new Color(0.13f, 0.77f, 0.37f, 1f); // #22C55E
-    private readonly Color colorInactive = new Color(0.33f, 0.33f, 0.33f, 1f); // #555555
+    [Header("Slider")]
+    [SerializeField] private RectTransform playSlider;
+    [SerializeField] private RectTransform scoreSlider;
+
+    private Coroutine _playSlide;
+    private Coroutine _scoreSlide;
     private System.Threading.CancellationTokenSource _scoreCts;
 
     [ContextMenu("Add Cannabis")]
@@ -86,7 +91,10 @@ public class MenuHandlerScript : MonoBehaviour
         if (btnScoreQuickplay != null) btnScoreQuickplay.onClick.AddListener(OnScoreboardQuickplay);
         if (btnScoreRanked != null)    btnScoreRanked.onClick.AddListener(OnScoreboardRanked);
 
+        Canvas.ForceUpdateCanvases();
+        SnapSlider(playSlider, btnPlayQuickplay, indicatorPlayQuickplay);
         OnPlayQuickplay();
+        SnapSlider(scoreSlider, btnScoreQuickplay, indicatorScoreQuickplay);
         OnScoreboardQuickplay();
         InitRankedInfo();
 
@@ -123,16 +131,14 @@ public class MenuHandlerScript : MonoBehaviour
     {
         RankedManager.IsRanked = false;
         if (pnlRankedInfo != null) pnlRankedInfo.SetActive(false);
-        if (indicatorPlayQuickplay != null) indicatorPlayQuickplay.color = colorActive;
-        if (indicatorPlayRanked != null)    indicatorPlayRanked.color    = colorInactive;
+        SlidePlayTo(indicatorPlayQuickplay);
     }
 
     private void OnPlayRanked()
     {
         RankedManager.IsRanked = true;
         if (pnlRankedInfo != null) pnlRankedInfo.SetActive(true);
-        if (indicatorPlayQuickplay != null) indicatorPlayQuickplay.color = colorInactive;
-        if (indicatorPlayRanked != null)    indicatorPlayRanked.color    = colorActive;
+        SlidePlayTo(indicatorPlayRanked);
         UpdateRankedResetText();
     }
 
@@ -142,8 +148,7 @@ public class MenuHandlerScript : MonoBehaviour
         _scoreCts = new System.Threading.CancellationTokenSource();
         var token = _scoreCts.Token;
         ClearScores();
-        if (indicatorScoreQuickplay != null) indicatorScoreQuickplay.color = colorActive;
-        if (indicatorScoreRanked != null)    indicatorScoreRanked.color    = colorInactive;
+        SlideScoreTo(indicatorScoreQuickplay);
         var scores = await leaderboardGetterScript.GetScores();
         if (!token.IsCancellationRequested) ShowScores(scores);
     }
@@ -154,10 +159,64 @@ public class MenuHandlerScript : MonoBehaviour
         _scoreCts = new System.Threading.CancellationTokenSource();
         var token = _scoreCts.Token;
         ClearScores();
-        if (indicatorScoreQuickplay != null) indicatorScoreQuickplay.color = colorInactive;
-        if (indicatorScoreRanked != null)    indicatorScoreRanked.color    = colorActive;
+        SlideScoreTo(indicatorScoreRanked);
         var scores = await leaderboardGetterScript.GetRankedScores();
         if (!token.IsCancellationRequested) ShowScores(scores);
+    }
+
+    private void SnapSlider(RectTransform slider, Button btn, Image indicator)
+    {
+        if (slider == null || btn == null || indicator == null) return;
+        RectTransform btnRT = btn.GetComponent<RectTransform>();
+        RectTransform indRT = indicator.rectTransform;
+        Vector3 pos = slider.localPosition;
+        pos.x = btnRT.localPosition.x;
+        pos.y = btnRT.localPosition.y + indRT.localPosition.y;
+        slider.localPosition = pos;
+        slider.sizeDelta = new Vector2(indRT.rect.width, slider.sizeDelta.y);
+    }
+
+    private void SlidePlayTo(Image targetIndicator)
+    {
+        if (playSlider == null || targetIndicator == null) return;
+        Button btn = targetIndicator.GetComponentInParent<Button>();
+        if (btn == null) return;
+        float x = btn.GetComponent<RectTransform>().localPosition.x;
+        float w = targetIndicator.rectTransform.rect.width;
+        if (_playSlide != null) StopCoroutine(_playSlide);
+        _playSlide = StartCoroutine(AnimateSlider(playSlider, x, w));
+    }
+
+    private void SlideScoreTo(Image targetIndicator)
+    {
+        if (scoreSlider == null || targetIndicator == null) return;
+        Button btn = targetIndicator.GetComponentInParent<Button>();
+        if (btn == null) return;
+        float x = btn.GetComponent<RectTransform>().localPosition.x;
+        float w = targetIndicator.rectTransform.rect.width;
+        if (_scoreSlide != null) StopCoroutine(_scoreSlide);
+        _scoreSlide = StartCoroutine(AnimateSlider(scoreSlider, x, w));
+    }
+
+    private IEnumerator AnimateSlider(RectTransform slider, float targetX, float targetWidth, float duration = 0.2f)
+    {
+        float startX = slider.localPosition.x;
+        float startWidth = slider.sizeDelta.x;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            Vector3 pos = slider.localPosition;
+            pos.x = Mathf.Lerp(startX, targetX, t);
+            slider.localPosition = pos;
+            slider.sizeDelta = new Vector2(Mathf.Lerp(startWidth, targetWidth, t), slider.sizeDelta.y);
+            yield return null;
+        }
+        Vector3 finalPos = slider.localPosition;
+        finalPos.x = targetX;
+        slider.localPosition = finalPos;
+        slider.sizeDelta = new Vector2(targetWidth, slider.sizeDelta.y);
     }
 
     private void ClearScores()

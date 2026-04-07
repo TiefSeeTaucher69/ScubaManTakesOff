@@ -51,6 +51,8 @@ public class LogicScript : MonoBehaviour
             Debug.LogWarning("WeeklyMissionManager.Instance ist null in addCannabisScore!");
         }
 
+        steff?.PlaySmokeEffect();
+
         if (cannabisCollectedPrefab != null && playerHead != null)
         {
             Debug.Log("Instantiating Cannabis Animation Icon");

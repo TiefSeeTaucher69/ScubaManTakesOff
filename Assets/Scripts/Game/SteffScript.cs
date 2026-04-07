@@ -17,6 +17,7 @@ public class SteffScript : MonoBehaviour
     public float runTime = 0f;
     public WeeklyMissionManager weeklyMissionManager;
     public Transform jointOffset;
+    public ParticleSystem jointSmokeParticles;
 
 
     private SpriteRenderer spriteRenderer;
@@ -252,5 +253,14 @@ public class SteffScript : MonoBehaviour
     public bool IsPaused()
     {
         return isPaused;
+    }
+
+    public void PlaySmokeEffect()
+    {
+        if (jointSmokeParticles != null)
+        {
+            jointSmokeParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            jointSmokeParticles.Play();
+        }
     }
 }
