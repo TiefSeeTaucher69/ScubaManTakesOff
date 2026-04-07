@@ -131,9 +131,11 @@ public class BootUpdateManager : MonoBehaviour
         }
         else
         {
-            UnityEngine.Debug.LogWarning("Update-Pr�fung fehlgeschlagen: " + request.error);
+            UnityEngine.Debug.LogWarning("Update-Pr\u00fcfung fehlgeschlagen: " + request.error);
             LoadNextScene();
         }
+
+        request.Dispose();
     }
 
     IEnumerator DownloadAndInstall()
@@ -150,20 +152,31 @@ public class BootUpdateManager : MonoBehaviour
         {
             UnityEngine.Debug.Log("Installer heruntergeladen, starte Installation...");
 
-            Process.Start(new ProcessStartInfo
+            try
             {
-                FileName = installerFilePath,
-                UseShellExecute = true,
-                Verb = "runas" // Erfordert Administratorrechte
-            });
-
-            Application.Quit(); // Spiel beenden
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = installerFilePath,
+                    UseShellExecute = true,
+                    Verb = "runas"
+                });
+                Application.Quit();
+            }
+            catch (System.Exception e)
+            {
+                UnityEngine.Debug.LogError("Installer konnte nicht gestartet werden: " + e.Message);
+                updateText.text = "Fehler beim Starten des Installers.\nBitte manuell updaten.";
+                skipButton.gameObject.SetActive(true);
+            }
         }
         else
         {
             UnityEngine.Debug.LogError("Download fehlgeschlagen: " + request.error);
-            // Optional: Fehleranzeige im UI oder erneut versuchen
+            updateText.text = "Download fehlgeschlagen. Bitte Verbindung prüfen.";
+            skipButton.gameObject.SetActive(true);
         }
+
+        request.Dispose();
     }
 
     private void LoadNextScene()
