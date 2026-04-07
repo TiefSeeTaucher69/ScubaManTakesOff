@@ -44,6 +44,10 @@ public class SteffScript : MonoBehaviour
                 Debug.Log("Skin '" + selectedSkin + "' gefunden. Skalierung 0.8x0.7x1");
                 transform.localScale = new Vector3(0.8f, 0.7f, 1f); // Tom-Bird Gr��e
             }
+            else if (selectedSkin == "paulaner-bird")
+            {
+                transform.localScale = new Vector3(0.8f, 0.8f, 1f);
+            }
             else if (selectedSkin == "ginger-bird")
             {
                 transform.localScale = new Vector3(0.8f, 0.7f, 1f); // Benjo-Bird Gr��e
@@ -79,6 +83,9 @@ public class SteffScript : MonoBehaviour
                     break;
                 case "tom-bird":
                     jointOffset.localPosition = new Vector3(1.75f, -0.15f, -0.1f);
+                    break;
+                case "paulaner-bird":
+                    jointOffset.localPosition = new Vector3(1.81f, -0.31f, -0.1f);
                     break;
                 case "ginger-bird":
                     jointOffset.localPosition = new Vector3(1.7f, -0.5f, -0.1f);

@@ -16031,6 +16031,13 @@ MonoBehaviour:
     ownedKey: HasSkin_jan-bird
     activeValue: jan-bird
     activePrefsKey: ActiveSkin
+  - itemName: Paulaner Bird
+    icon: {fileID: 2308793307496937728, guid: d247bc238e857894da41eb1cbbdba22b, type: 3}
+    cost: 25
+    alwaysOwned: 0
+    ownedKey: HasSkin_paulaner-bird
+    activeValue: paulaner-bird
+    activePrefsKey: ActiveSkin
   skinsContent: {fileID: 899842449}
   shopCardPrefab: {fileID: 8383627937882590935, guid: 57246113e67d33944ada411b537e3b81, type: 3}
   cannabisStashText: {fileID: 524480003}
