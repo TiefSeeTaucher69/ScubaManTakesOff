@@ -155,6 +155,13 @@ public class SteffScript : MonoBehaviour
 
         if (isPaused) return;
 
+        // Vogel kippt vor/zurück je nach Rigidbody-Geschwindigkeit
+        if (steffIsAlive)
+        {
+            float targetAngle = Mathf.Clamp(myRigitbody.linearVelocity.y * 5f, -80f, 30f);
+            transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
+        }
+
         if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0)) && steffIsAlive)
         {
             myRigitbody.linearVelocity = Vector2.up * flapStrength;
@@ -178,6 +185,8 @@ public class SteffScript : MonoBehaviour
         {
             hitAudioSource.Play();
         }
+        if (CameraShakeScript.Instance != null)
+            CameraShakeScript.Instance.Shake(0.4f, 0.4f);
         logic.gameOver();
         steffIsAlive = false;
     }
