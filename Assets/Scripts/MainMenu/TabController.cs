@@ -102,6 +102,8 @@ public class TabController : MonoBehaviour
             yield return null;
         }
         cg.alpha = 1f;
+        cg.interactable = true;
+        cg.blocksRaycasts = true;
     }
 
     // Setzt X + Y einmalig aus Button + Indicator (Y ändert sich zwischen Tabs nie)

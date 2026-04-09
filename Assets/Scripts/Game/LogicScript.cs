@@ -186,6 +186,7 @@ public class LogicScript : MonoBehaviour
             int previousTotalScore = PlayerPrefs.GetInt("TotalScore", 0);
             int newTotalScore = previousTotalScore + score;
             PlayerPrefs.SetInt("TotalScore", newTotalScore);
+            PlayerPrefs.SetInt("TotalRuns", PlayerPrefs.GetInt("TotalRuns", 0) + 1);
             PlayerPrefs.Save();
 
             WeeklyMissionManager.Instance.UpdateMission(MissionType.TotalScore, score);
