@@ -24,6 +24,7 @@ public class TabController : MonoBehaviour
 
     private int currentTab = 0;
     private Coroutine _slideCoroutine;
+    private Coroutine _fadeCoroutine;
 
     void Start()
     {
@@ -72,6 +73,15 @@ public class TabController : MonoBehaviour
         currentTab = index;
         tabs[currentTab].panel.SetActive(true);
 
+        // Panel einblenden
+        var cg = tabs[currentTab].panel.GetComponent<CanvasGroup>();
+        if (cg != null)
+        {
+            cg.alpha = 0f;
+            if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
+            _fadeCoroutine = StartCoroutine(FadeIn(cg));
+        }
+
         if (tabSlider == null || tabs[index].indicator == null) return;
 
         RectTransform btnRT = tabs[index].button.GetComponent<RectTransform>();
@@ -80,6 +90,18 @@ public class TabController : MonoBehaviour
 
         if (_slideCoroutine != null) StopCoroutine(_slideCoroutine);
         _slideCoroutine = StartCoroutine(AnimateSlider(tabSlider, targetX, targetWidth));
+    }
+
+    private IEnumerator FadeIn(CanvasGroup cg, float duration = 0.2f)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(0f, 1f, elapsed / duration);
+            yield return null;
+        }
+        cg.alpha = 1f;
     }
 
     // Setzt X + Y einmalig aus Button + Indicator (Y ändert sich zwischen Tabs nie)

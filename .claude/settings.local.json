@@ -20,7 +20,13 @@
       "Bash(find \"/e/Unity/Tutorial/Tutorial\" -name \"*.meta\" -type f -exec grep -H \"a97c105638bdf8b4a8650670310a4cd3\" {} \\\\;)",
       "Bash(find Assets -name \"*.shader.meta\" -exec grep -l \"b4d00bac79840aa459982b3f9e32c5b5\" {} \\\\;)",
       "mcp__ai-game-developer__scene-open",
-      "Bash(python3 -c ':*)"
+      "Bash(python3 -c ':*)",
+      "Bash(find /e/Unity/Tutorial/Tutorial/Assets/Scripts/ItemShop -name \"*.cs\" -exec basename {} \\\\;)",
+      "mcp__ai-game-developer__scene-list-opened",
+      "mcp__ai-game-developer__gameobject-component-get",
+      "mcp__ai-game-developer__gameobject-component-list-all",
+      "mcp__ai-game-developer__object-get-data",
+      "mcp__ai-game-developer__script-execute"
     ]
   }
 }

@@ -128,6 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1113941}
+  - component: {fileID: 1113942}
   m_Layer: 5
   m_Name: TrailShop Site
   m_TagString: Untagged
@@ -155,6 +156,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &1113942
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113940}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &4877533
 GameObject:
   m_ObjectHideFlags: 0
@@ -2593,9 +2606,9 @@ RectTransform:
   - {fileID: 1569553185}
   m_Father: {fileID: 698724022}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 160, y: -50}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &207346768
@@ -4168,9 +4181,9 @@ RectTransform:
   - {fileID: 643665657}
   m_Father: {fileID: 698724022}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 767.79, y: -50}
   m_SizeDelta: {x: 257.4, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &320109768
@@ -4300,6 +4313,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 341186128}
+  - component: {fileID: 341186129}
   m_Layer: 5
   m_Name: ItemShop Site
   m_TagString: Untagged
@@ -4327,6 +4341,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &341186129
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 341186127}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &342845123
 GameObject:
   m_ObjectHideFlags: 0
@@ -4622,6 +4648,7 @@ GameObject:
   m_Component:
   - component: {fileID: 357558766}
   - component: {fileID: 357558767}
+  - component: {fileID: 357558768}
   m_Layer: 5
   m_Name: PetsShop Site
   m_TagString: Untagged
@@ -4777,6 +4804,18 @@ MonoBehaviour:
   petsContent: {fileID: 570717356}
   shopCardPrefab: {fileID: 8383627937882590935, guid: 57246113e67d33944ada411b537e3b81, type: 3}
   cannabisStashText: {fileID: 524480003}
+--- !u!225 &357558768
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357558765}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &359973483
 GameObject:
   m_ObjectHideFlags: 0
@@ -5213,6 +5252,7 @@ GameObject:
   - component: {fileID: 391309993}
   - component: {fileID: 391309992}
   - component: {fileID: 391309994}
+  - component: {fileID: 391309995}
   m_Layer: 5
   m_Name: Pnl_Settings
   m_TagString: Untagged
@@ -5298,6 +5338,18 @@ MonoBehaviour:
   masterSlider: {fileID: 1735382942}
   musicSlider: {fileID: 1226670958}
   sfxSlider: {fileID: 700505163}
+--- !u!225 &391309995
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391309990}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &401825542
 GameObject:
   m_ObjectHideFlags: 0
@@ -5333,9 +5385,9 @@ RectTransform:
   - {fileID: 540615106}
   m_Father: {fileID: 82199269}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 77.45, y: -50}
   m_SizeDelta: {x: 154.9, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &401825544
@@ -7209,9 +7261,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 698724022}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 30, y: -50}
   m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &524784136
@@ -7757,6 +7809,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 566613877}
+  - component: {fileID: 566613878}
   m_Layer: 5
   m_Name: CharacterShop Site
   m_TagString: Untagged
@@ -7784,6 +7837,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &566613878
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566613876}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &569972767
 GameObject:
   m_ObjectHideFlags: 0
@@ -12666,9 +12731,9 @@ RectTransform:
   - {fileID: 789167621}
   m_Father: {fileID: 698724022}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1206.49, y: -50}
   m_SizeDelta: {x: 251.5, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &990703143
@@ -14674,6 +14739,7 @@ GameObject:
   - component: {fileID: 1161424303}
   - component: {fileID: 1161424305}
   - component: {fileID: 1161424304}
+  - component: {fileID: 1161424306}
   m_Layer: 5
   m_Name: Pnl_Missions
   m_TagString: Untagged
@@ -14741,6 +14807,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1161424302}
   m_CullTransparentMesh: 1
+--- !u!225 &1161424306
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1161424302}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1166651234
 GameObject:
   m_ObjectHideFlags: 0
@@ -14851,9 +14929,9 @@ RectTransform:
   - {fileID: 1577965326}
   m_Father: {fileID: 82199269}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 226.15, y: -50}
   m_SizeDelta: {x: 122.5, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1175105927
@@ -16836,6 +16914,7 @@ RectTransform:
   - {fileID: 1576154159}
   - {fileID: 1389774725}
   - {fileID: 183773123}
+  - {fileID: 1531857919}
   m_Father: {fileID: 1479634426}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -17326,6 +17405,7 @@ GameObject:
   - component: {fileID: 1479634429}
   - component: {fileID: 1479634428}
   - component: {fileID: 1479634430}
+  - component: {fileID: 1479634431}
   m_Layer: 5
   m_Name: Pnl_Shop
   m_TagString: Untagged
@@ -17502,6 +17582,18 @@ MonoBehaviour:
   skinsContent: {fileID: 899842449}
   shopCardPrefab: {fileID: 8383627937882590935, guid: 57246113e67d33944ada411b537e3b81, type: 3}
   cannabisStashText: {fileID: 524480003}
+--- !u!225 &1479634431
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1479634425}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1499616180
 GameObject:
   m_ObjectHideFlags: 0
@@ -17677,6 +17769,102 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1504881513}
+  m_CullTransparentMesh: 1
+--- !u!1 &1531857918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1531857919}
+  - component: {fileID: 1531857922}
+  - component: {fileID: 1531857921}
+  - component: {fileID: 1531857920}
+  m_Layer: 5
+  m_Name: Img_Slider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1531857919
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1531857918}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1374727381}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 66.6, y: 3}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1531857920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1531857918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 1
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
+--- !u!114 &1531857921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1531857918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.13333, g: 0.77255, b: 0.36863, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1531857922
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1531857918}
   m_CullTransparentMesh: 1
 --- !u!1 &1535734545
 GameObject:
@@ -19564,6 +19752,7 @@ GameObject:
   - component: {fileID: 1654217432}
   - component: {fileID: 1654217434}
   - component: {fileID: 1654217433}
+  - component: {fileID: 1654217435}
   m_Layer: 5
   m_Name: Pnl_Play
   m_TagString: Untagged
@@ -19633,6 +19822,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1654217431}
   m_CullTransparentMesh: 1
+--- !u!225 &1654217435
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1654217431}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1655011657
 GameObject:
   m_ObjectHideFlags: 0
@@ -19692,8 +19893,8 @@ MonoBehaviour:
     indicator: {fileID: 342845125}
   - panel: {fileID: 1937198433}
     indicator: {fileID: 1061809718}
-  activeColor: {r: 0.13, g: 0.77, b: 0.37, a: 1}
   inactiveColor: {r: 0.33, g: 0.33, b: 0.33, a: 1}
+  tabSlider: {fileID: 1531857919}
 --- !u!1 &1655969568
 GameObject:
   m_ObjectHideFlags: 0
@@ -20469,6 +20670,7 @@ GameObject:
   - component: {fileID: 1716359342}
   - component: {fileID: 1716359344}
   - component: {fileID: 1716359343}
+  - component: {fileID: 1716359345}
   m_Layer: 5
   m_Name: Pnl_Scoreboard
   m_TagString: Untagged
@@ -20536,6 +20738,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1716359341}
   m_CullTransparentMesh: 1
+--- !u!225 &1716359345
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716359341}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1731885851
 GameObject:
   m_ObjectHideFlags: 0
@@ -21751,9 +21965,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 698724022}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1382.24, y: -50}
   m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1815684338
@@ -22008,9 +22222,9 @@ RectTransform:
   - {fileID: 2030775756}
   m_Father: {fileID: 698724022}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 439.54498, y: -50}
   m_SizeDelta: {x: 359.09, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1833949189
@@ -22576,9 +22790,9 @@ RectTransform:
   - {fileID: 880318281}
   m_Father: {fileID: 698724022}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 988.615, y: -50}
   m_SizeDelta: {x: 144.25, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1868517421
@@ -23302,6 +23516,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1937198434}
   - component: {fileID: 1937198435}
+  - component: {fileID: 1937198436}
   m_Layer: 5
   m_Name: BiomesShop Site
   m_TagString: Untagged
@@ -23380,6 +23595,18 @@ MonoBehaviour:
   biomesContent: {fileID: 1192371796}
   shopCardPrefab: {fileID: 8383627937882590935, guid: 57246113e67d33944ada411b537e3b81, type: 3}
   cannabisStashText: {fileID: 524480003}
+--- !u!225 &1937198436
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1937198433}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1969115871
 GameObject:
   m_ObjectHideFlags: 0

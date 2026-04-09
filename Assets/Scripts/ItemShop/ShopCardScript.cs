@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -17,6 +18,24 @@ public class ShopCardScript : MonoBehaviour
 
     private ItemShopHandler.ShopItemData data;
     private System.Action onChanged;
+
+    void Start()
+    {
+        transform.localScale = Vector3.one * 0.8f;
+        StartCoroutine(PopIn());
+    }
+
+    private IEnumerator PopIn(float duration = 0.15f)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            transform.localScale = Vector3.one * Mathf.Lerp(0.8f, 1.0f, elapsed / duration);
+            yield return null;
+        }
+        transform.localScale = Vector3.one;
+    }
 
     public void Setup(ItemShopHandler.ShopItemData itemData, System.Action onChangedCallback)
     {
