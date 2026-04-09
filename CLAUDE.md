@@ -5,7 +5,9 @@ PC Flappy-Bird-Klon in Unity (URP, Unity 6). Einzelspieler. Deutsche UI und Komm
 GitHub: https://github.com/TiefSeeTaucher69/FlappySteff
 
 ## Szenen-Reihenfolge
-BootScene → FirstOpen (nur erstes Mal) → MainMenu → GameScene / ItemShop / SettingsScene / EscapeScene
+BootScene → FirstOpen (nur erstes Mal) → MainMenu → GameScene
+
+**Hinweis:** ItemShop, SettingsScene und EscapeScene existieren **nicht mehr als eigene Szenen** — sie sind als Panels in MainMenu integriert (Pnl_Shop, Pnl_Settings, Quit-Panel).
 
 ## Skins
 | Name | Status | PlayerPrefs-Key |
@@ -104,6 +106,30 @@ Alle Spieler bekommen dieselben 3 Missionen pro Woche. Vollständig offline/loka
 - Client ID im Inspector (`clientId`-Feld)
 - Zeigt je nach Szene: "Im Hauptmenü" / "Score: X | Quickplay" / "Score: X | Ranked" / "Im Shop"
 - Score-Update alle 5 Sekunden via Polling auf `LogicScript.playerScore`
+
+## MainMenu UI-Architektur
+
+### Tab-Navigation (TabController.cs)
+`Canvas` hat 5 Haupt-Panels: `Pnl_Play`, `Pnl_Scoreboard`, `Pnl_Missions`, `Pnl_Shop`, `Pnl_Settings`.
+`TabController.cs` schaltet zwischen ihnen um. Jedes Panel hat eine `CanvasGroup` für Fade-In (alpha 0→1, 0.2s).
+TabBar hat ein `Img_Slider` (grün, `LayoutElement.ignoreLayout=true`) das per Coroutine animiert wird.
+
+### Shop (Pnl_Shop)
+Shop ist ein Tab in MainMenu, kein eigener Scene-Load mehr.
+`ShopBar` hat `HorizontalLayoutGroup` + ein `Img_Slider` Child mit `LayoutElement.ignoreLayout=true`.
+`ShopPageSwitcher.cs` schaltet zwischen 5 Kategorien: Items, Trails, Skins, Pets, Biomes.
+Jedes Shop-Site-Panel (`ItemShop Site` etc.) hat eine `CanvasGroup` für Fade-In (0.15s).
+Slider-Position wird via `indicator.GetComponentInParent<Button>().localPosition.x` ermittelt.
+
+### Shop-Karten (ShopCardScript.cs)
+Jede generierte Shop-Karte spielt beim Erscheinen eine Pop-in Animation (Scale 0.8→1.0, 0.15s).
+
+### AnimateSlider-Pattern (in TabController, ShopPageSwitcher, MenuHandlerScript)
+Alle Slider-Animationen: `Mathf.Lerp` auf `localPosition.x` + `sizeDelta.x` in Coroutine (0.2s).
+`SnapSlider()` setzt initiale Position ohne Animation (wird in `Start()` vor erstem `SwitchTab()` aufgerufen).
+
+### Wichtiger Unity-Hinweis
+`GameObject.Find()` findet **keine inaktiven** GameObjects → stattdessen `canvas.transform.Find("Pnl_Shop/...")` nutzen.
 
 ## Architektur-Entscheidungen
 - `WeeklyMissionManager` ist DontDestroyOnLoad Singleton

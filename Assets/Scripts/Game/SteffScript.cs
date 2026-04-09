@@ -167,7 +167,6 @@ public class SteffScript : MonoBehaviour
         Vector3 viewportPos = Camera.main.WorldToViewportPoint(transform.position);
         if (viewportPos.x < 0 || viewportPos.x > 1 || viewportPos.y < 0 || viewportPos.y > 1)
         {
-            Debug.Log("Object has left the screen");
             logic.gameOver();
             steffIsAlive = false;
         }

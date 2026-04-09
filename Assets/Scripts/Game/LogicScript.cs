@@ -93,11 +93,14 @@ public class LogicScript : MonoBehaviour
         if (firstButton != null)
             EventSystem.current?.SetSelectedGameObject(firstButton.gameObject);
 
+        bool istNeuerRekord = false;
+
         if (RankedManager.IsRanked)
         {
             int rankedHighScore = PlayerPrefs.GetInt("RankedHighscore", 0);
             if (playerScore > rankedHighScore)
             {
+                istNeuerRekord = true;
                 PlayerPrefs.SetInt("RankedHighscore", playerScore);
                 PlayerPrefs.Save();
                 Debug.Log("Neuer Ranked Highscore: " + playerScore);
@@ -112,6 +115,7 @@ public class LogicScript : MonoBehaviour
         {
             if (playerScore > highScore)
             {
+                istNeuerRekord = true;
                 PlayerPrefs.SetInt("Highscore", playerScore);
                 PlayerPrefs.Save();
                 Debug.Log("New high score saved: " + playerScore);
@@ -127,6 +131,10 @@ public class LogicScript : MonoBehaviour
         int collectedLeaves = collectedLeavesInCurrentRun;
         float runTime = steff.runTime;
         bool survived30Seconds = runTime >= 30f;
+
+        var summary = gameOverScreen.GetComponent<RunSummaryScript>();
+        if (summary != null)
+            summary.ZeigeSummary(score, collectedLeaves, runTime, istNeuerRekord);
 
         OnRunEnd(score, collectedLeaves, runTime, survived30Seconds);
 
