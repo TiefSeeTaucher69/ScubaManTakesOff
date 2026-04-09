@@ -131,7 +131,7 @@ public class BootUpdateManager : MonoBehaviour
         }
         else
         {
-            UnityEngine.Debug.LogWarning("Update-Pr\u00fcfung fehlgeschlagen: " + request.error);
+            UnityEngine.Debug.LogWarning("Update-Check failed: " + request.error);
             LoadNextScene();
         }
 

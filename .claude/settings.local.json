@@ -3,7 +3,24 @@
     "allow": [
       "Bash(xargs grep:*)",
       "Bash(grep -n -B 5 -A 20 \"m_Name: Steff$\" \"e:/Unity/Tutorial/Tutorial/Assets/Scenes/GameScene.unity\")",
-      "Bash(grep -B5 -A15 \"m_Name: Updater$\" \"/e/Unity/Tutorial/Tutorial/Assets/Scenes/BootScene.unity\")"
+      "Bash(grep -B5 -A15 \"m_Name: Updater$\" \"/e/Unity/Tutorial/Tutorial/Assets/Scenes/BootScene.unity\")",
+      "Bash(grep -E \"\\\\.\\(unity|prefab\\)$\")",
+      "Bash(ls -lah /e/Unity/Tutorial/Tutorial/Assets/unitytut-pipe.png*)",
+      "mcp__ai-game-developer__assets-find",
+      "mcp__ai-game-developer__assets-get-data",
+      "mcp__ai-game-developer__assets-prefab-open",
+      "mcp__ai-game-developer__scene-get-data",
+      "mcp__ai-game-developer__gameobject-find",
+      "Bash(grep -A 30 \"^--- !u!1 &894$\" \"e:\\\\Unity\\\\Tutorial\\\\Tutorial/Assets/Scenes/GameScene.unity\")",
+      "Bash(xargs -0 grep -l \"a97c105638bdf8b4a8650670310a4cd3\")",
+      "Bash(grep -E \"\\\\.\\(prefab|unity\\)$\")",
+      "Bash(find \"/e/Unity/Tutorial/Tutorial/Assets/Materials\" -name \"*.mat.meta\" -type f -exec grep -l \"guid: a97c105638bdf8b4a8650670310a4cd3\" {} \\\\;)",
+      "Bash(find \"/e/Unity/Tutorial/Tutorial/Assets\" -name \"*.mat.meta\" -type f -exec grep -H \"a97c105638bdf8b4a8650670310a4cd3\" {} \\\\;)",
+      "Bash(grep -l \"ItemShop\\\\|Shop\" \"e:\\\\Unity\\\\Tutorial\\\\Tutorial/Assets/Scenes\"/*.unity)",
+      "Bash(find \"/e/Unity/Tutorial/Tutorial\" -name \"*.meta\" -type f -exec grep -H \"a97c105638bdf8b4a8650670310a4cd3\" {} \\\\;)",
+      "Bash(find Assets -name \"*.shader.meta\" -exec grep -l \"b4d00bac79840aa459982b3f9e32c5b5\" {} \\\\;)",
+      "mcp__ai-game-developer__scene-open",
+      "Bash(python3 -c ':*)"
     ]
   }
 }

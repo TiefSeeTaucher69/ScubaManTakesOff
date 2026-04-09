@@ -50,6 +50,12 @@ public class PipeSpawnScript : MonoBehaviour
             y = Random.Range(transform.position.y - heightOffset, transform.position.y + heightOffset);
         }
 
-        Instantiate(pipe, new Vector3(transform.position.x, y), transform.rotation);
+        GameObject spawnedPipe = Instantiate(pipe, new Vector3(transform.position.x, y), transform.rotation);
+
+        if (BiomeManager.ActivePipeMaterial != null)
+        {
+            foreach (var sr in spawnedPipe.GetComponentsInChildren<SpriteRenderer>())
+                sr.sharedMaterial = BiomeManager.ActivePipeMaterial;
+        }
     }
 }
