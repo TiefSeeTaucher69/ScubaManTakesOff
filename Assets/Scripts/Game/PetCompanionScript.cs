@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PetCompanionScript : MonoBehaviour
 {
-    private enum State { Following, Seeking, Attacking, Returning }
+    private enum State { Following, Seeking, Attacking, Returning, Mourning }
 
     private float _detectionRadius = 12f;
     private float _seekSpeed       = 28f;
@@ -21,6 +21,10 @@ public class PetCompanionScript : MonoBehaviour
     private State      _state;
     private float      _attackTimer;
     private Vector3    _velocity;
+    private Vector3    _deathTarget;
+    private bool       _deathAnimPlayed;
+    private bool       _sinking;
+    private float      _sinkSpeed;
 
     public void Init(SteffScript steff, LogicScript logic, float detectionRadius, float seekSpeed)
     {
@@ -40,7 +44,24 @@ public class PetCompanionScript : MonoBehaviour
 
     void Update()
     {
-        if (_steff == null || !_steff.steffIsAlive) return;
+        if (_steff == null) return;
+
+        if (!_steff.steffIsAlive)
+        {
+            if (_state != State.Mourning)
+            {
+                // Einmalig: Todesposition merken und hinlaufen
+                _deathTarget      = _steff.transform.position;
+                _deathAnimPlayed  = false;
+                _leafGO           = null;
+                _leafTransform    = null;
+                _leafCollision    = null;
+                _monster?.SetState(MonsterState.Run);
+                _state = State.Mourning;
+            }
+            Mourn();
+            return;
+        }
 
         switch (_state)
         {
@@ -49,6 +70,38 @@ public class PetCompanionScript : MonoBehaviour
             case State.Attacking: Attack();         break;
             case State.Returning: Return();         break;
         }
+    }
+
+    void Mourn()
+    {
+        // Phase 2: nach Death-Animation langsam nach unten gleiten
+        if (_sinking)
+        {
+            _sinkSpeed = Mathf.MoveTowards(_sinkSpeed, 4f, 1.5f * Time.deltaTime);
+            transform.position += Vector3.down * _sinkSpeed * Time.deltaTime;
+            return;
+        }
+
+        if (_deathAnimPlayed) return;
+
+        // Phase 1: flüssig zur Todesposition laufen
+        transform.position = Vector3.SmoothDamp(
+            transform.position, _deathTarget, ref _velocity, 0.35f, _seekSpeed);
+
+        if (Near(_deathTarget, 0.4f))
+        {
+            _monster?.SetState(MonsterState.Death);
+            _deathAnimPlayed = true;
+            // Kurz warten dann sinken starten
+            StartCoroutine(StartSinking());
+        }
+    }
+
+    System.Collections.IEnumerator StartSinking()
+    {
+        yield return new WaitForSeconds(1.2f);
+        _sinkSpeed = 0f;
+        _sinking   = true;
     }
 
     void Follow() => SmoothMove(_steff.transform.position + Offset);

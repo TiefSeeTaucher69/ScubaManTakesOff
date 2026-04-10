@@ -34,6 +34,7 @@ public class InvincibilityManager : MonoBehaviour
         HandleCooldownUI();
 
         if (steff != null && !steff.steffIsAlive) return;
+        if (steff != null && steff.IsPaused()) return;
 
         if ((Input.GetKeyDown(KeyCode.E) && !isInvincible && !isOnCooldown) || (Input.GetKeyDown(KeyCode.Mouse0) && !isInvincible && !isOnCooldown) || (Input.GetKeyDown(KeyCode.JoystickButton3) && !isInvincible && !isOnCooldown))
         {

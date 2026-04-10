@@ -34,6 +34,7 @@ public class ShrinkManager : MonoBehaviour
         HandleCooldownUI();
 
         if (steff != null && !steff.steffIsAlive) return;
+        if (steff != null && steff.IsPaused()) return;
 
         if ((Input.GetKeyDown(KeyCode.E) && !isShrunk && !isOnCooldown) ||
             (Input.GetKeyDown(KeyCode.Mouse0) && !isShrunk && !isOnCooldown) ||

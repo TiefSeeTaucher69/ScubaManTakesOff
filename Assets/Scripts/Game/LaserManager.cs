@@ -31,6 +31,7 @@ public class LaserManager : MonoBehaviour
         HandleCooldownUI();
 
         if (steff != null && !steff.steffIsAlive) return;
+        if (steff != null && steff.IsPaused()) return;
 
         if ((Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.JoystickButton3)) && !isOnCooldown)
         {

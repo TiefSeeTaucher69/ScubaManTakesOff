@@ -53,7 +53,7 @@ Shader "Custom/SpriteBark"
                 Varyings OUT;
                 OUT.pos    = TransformObjectToHClip(IN.pos.xyz);
                 OUT.uv     = TRANSFORM_TEX(IN.uv, _MainTex);
-                OUT.barkUV = IN.uv * _BarkTiling;
+                OUT.barkUV = TRANSFORM_TEX(IN.uv, _BarkTex) * _BarkTiling;
                 OUT.col    = IN.col;
                 return OUT;
             }
@@ -67,52 +67,6 @@ Shader "Custom/SpriteBark"
             ENDHLSL
         }
 
-        // ── Pass 2: Fallback für nicht-beleuchtete Layer / Legacy-Renderer ─
-        // Wird NUR aufgerufen wenn Universal2D NICHT aktiv ist (kein 2D-Licht).
-        // ZusatzRenderung auf demselben Objekt im gleichen Frame wird durch den
-        // URP 2D Renderer verhindert — er ruft immer nur einen Pass pro Objekt auf.
-        Pass
-        {
-            Name "SpriteBark_Unlit"
-            Tags { "LightMode" = "SRPDefaultUnlit" }
 
-            Blend SrcAlpha OneMinusSrcAlpha
-
-            HLSLPROGRAM
-            #pragma vertex   vert
-            #pragma fragment frag
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-
-            TEXTURE2D(_MainTex); SAMPLER(sampler_MainTex);
-            TEXTURE2D(_BarkTex); SAMPLER(sampler_BarkTex);
-
-            CBUFFER_START(UnityPerMaterial)
-                float4 _MainTex_ST;
-                float4 _BarkTex_ST;
-                float  _BarkTiling;
-                float4 _Color;
-            CBUFFER_END
-
-            struct Attributes { float4 pos:POSITION; float2 uv:TEXCOORD0; float4 col:COLOR; };
-            struct Varyings   { float4 pos:SV_POSITION; float2 uv:TEXCOORD0; float2 barkUV:TEXCOORD1; float4 col:COLOR; };
-
-            Varyings vert(Attributes IN)
-            {
-                Varyings OUT;
-                OUT.pos    = TransformObjectToHClip(IN.pos.xyz);
-                OUT.uv     = TRANSFORM_TEX(IN.uv, _MainTex);
-                OUT.barkUV = IN.uv * _BarkTiling;
-                OUT.col    = IN.col;
-                return OUT;
-            }
-
-            half4 frag(Varyings IN) : SV_Target
-            {
-                half4 sprite = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
-                half4 bark   = SAMPLE_TEXTURE2D(_BarkTex, sampler_BarkTex, IN.barkUV);
-                return half4(bark.rgb * _Color.rgb * IN.col.rgb, sprite.a * _Color.a * IN.col.a);
-            }
-            ENDHLSL
-        }
     }
 }

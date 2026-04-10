@@ -1979,23 +1979,23 @@ MonoBehaviour:
   - biomeName: Mountain
     backgroundTexture: {fileID: 2800000, guid: fd00b29c3d9553d4c8e0ab3b572af409, type: 3}
     fallbackColor: {r: 0.53, g: 0.81, b: 0.92, a: 1}
-    pipeMaterial: {fileID: 2100000, guid: f7e998bbfb9ef2b43b99871a92e6929e, type: 2}
+    pipeMaterial: {fileID: 2100000, guid: d0003b96b53e0574382230be6dc3d200, type: 2}
   - biomeName: Desert
     backgroundTexture: {fileID: 2800000, guid: 9d1a3e0bc36dfc9468a738d92b6e92d4, type: 3}
     fallbackColor: {r: 0.93, g: 0.79, b: 0.55, a: 1}
-    pipeMaterial: {fileID: 2100000, guid: 863aae3c1a79ac843a4e6e1fe8b761d6, type: 2}
+    pipeMaterial: {fileID: 2100000, guid: edca4ef256258e84c95e16f6a199e382, type: 2}
   - biomeName: Graveyard
     backgroundTexture: {fileID: 2800000, guid: 367fef7c7a0cf8b4e8fc2020259965e9, type: 3}
     fallbackColor: {r: 0.25, g: 0.25, b: 0.3, a: 1}
-    pipeMaterial: {fileID: 2100000, guid: eb24d729d2883004789362169b66c89b, type: 2}
+    pipeMaterial: {fileID: 2100000, guid: 0476450538340c343ace87848eac33a8, type: 2}
   - biomeName: Snow
     backgroundTexture: {fileID: 2800000, guid: 429517ea1b1287a47952cd5cd8261d74, type: 3}
     fallbackColor: {r: 0.87, g: 0.95, b: 1, a: 1}
-    pipeMaterial: {fileID: 2100000, guid: 56e807bcf7602ce4b8044b05189953ea, type: 2}
+    pipeMaterial: {fileID: 2100000, guid: 3a7cd9175d575a54cb99cd18382dad5c, type: 2}
   - biomeName: Jungle
     backgroundTexture: {fileID: 2800000, guid: b610df97a81ba8349af61c3e87fbb8e3, type: 3}
     fallbackColor: {r: 0.1, g: 0.47, b: 0.1, a: 1}
-    pipeMaterial: {fileID: 2100000, guid: b390954f3ea8bcf44b34d05a14f312cc, type: 2}
+    pipeMaterial: {fileID: 2100000, guid: 73443bd9e82ea1b4f9e4fd38e577314e, type: 2}
   backgroundRenderer: {fileID: 549770965}
   parallaxFactor: 1
 --- !u!4 &401175269
