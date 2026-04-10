@@ -157,15 +157,14 @@ public class BootUpdateManager : MonoBehaviour
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = installerFilePath,
-                    UseShellExecute = true,
-                    Verb = "runas"
+                    UseShellExecute = true
                 });
                 Application.Quit();
             }
             catch (System.Exception e)
             {
                 UnityEngine.Debug.LogError("Installer konnte nicht gestartet werden: " + e.Message);
-                updateText.text = "Fehler beim Starten des Installers.\nBitte manuell updaten.";
+                updateText.text = "Fehler beim Starten des Installers:\n" + e.Message;
                 skipButton.gameObject.SetActive(true);
             }
         }
