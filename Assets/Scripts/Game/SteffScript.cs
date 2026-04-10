@@ -186,7 +186,7 @@ public class SteffScript : MonoBehaviour
             hitAudioSource.Play();
         }
         if (CameraShakeScript.Instance != null)
-            CameraShakeScript.Instance.Shake(0.4f, 0.4f);
+            CameraShakeScript.Instance.Shake(0.4f, 0.4f, playDeathSound: true);
         logic.gameOver();
         steffIsAlive = false;
     }

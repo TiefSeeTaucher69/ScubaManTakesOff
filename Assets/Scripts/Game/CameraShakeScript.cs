@@ -1,9 +1,14 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class CameraShakeScript : MonoBehaviour
 {
     public static CameraShakeScript Instance;
+
+    [Header("Death Sound")]
+    public AudioClip deathSound;
+    public AudioMixerGroup sfxMixerGroup;
 
     private Vector3 originalLocalPos;
     private float originalOrthoSize;
@@ -25,11 +30,21 @@ public class CameraShakeScript : MonoBehaviour
             Instance = null;
     }
 
-    public void Shake(float duration, float magnitude)
+    public void Shake(float duration, float magnitude, bool playDeathSound = false)
     {
         if (activeShake != null)
             StopCoroutine(activeShake);
         activeShake = StartCoroutine(DoShake(duration, magnitude));
+
+        if (playDeathSound && deathSound != null)
+        {
+            var go = new GameObject("DeathSound_OneShot");
+            var src = go.AddComponent<AudioSource>();
+            src.clip = deathSound;
+            src.outputAudioMixerGroup = sfxMixerGroup;
+            src.Play();
+            Destroy(go, deathSound.length + 0.1f);
+        }
     }
 
     private IEnumerator DoShake(float duration, float magnitude)

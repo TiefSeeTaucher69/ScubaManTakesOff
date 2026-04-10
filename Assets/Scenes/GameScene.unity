@@ -2688,6 +2688,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 282e55ed11e9def4fbab495032afd9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraShakeScript
+  deathSound: {fileID: 8300000, guid: 9de717878cdf87045838fa116666b136, type: 3}
+  sfxMixerGroup: {fileID: 4037809479146716317, guid: a00fc7eea2677454b8f375ef50f72fa5, type: 2}
 --- !u!1 &535239208
 GameObject:
   m_ObjectHideFlags: 0
