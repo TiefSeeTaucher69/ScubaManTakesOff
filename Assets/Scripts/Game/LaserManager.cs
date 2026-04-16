@@ -56,7 +56,11 @@ public class LaserManager : MonoBehaviour
 
     void FireLaser()
     {
-        Instantiate(laserPrefab, firePoint.position, firePoint.rotation);
+        // Immer horizontal schießen, unabhängig von der Bird-Neigung
+        Quaternion horizontalDir = DirectionFlipManager.IsFlipped
+            ? Quaternion.Euler(0f, 180f, 0f)
+            : Quaternion.identity;
+        Instantiate(laserPrefab, firePoint.position, horizontalDir);
     }
 
     IEnumerator StartCooldown()

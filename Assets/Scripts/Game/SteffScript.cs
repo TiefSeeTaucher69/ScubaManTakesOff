@@ -21,6 +21,9 @@ public class SteffScript : MonoBehaviour
 
 
     private SpriteRenderer spriteRenderer;
+    private float _baseJointX;
+    private ShieldManager shieldManager;
+    private float _originalGravityScale;
 
     void Start()
     {
@@ -100,6 +103,7 @@ public class SteffScript : MonoBehaviour
                     jointOffset.localPosition = new Vector3(1.57f, -0.19f, -0.1f);
                     break;
             }
+            _baseJointX = jointOffset.localPosition.x; // positiver Basiswert für Richtungs-Flip
         }
 
 
@@ -109,6 +113,9 @@ public class SteffScript : MonoBehaviour
 
         if (settingsOnPauseScreen != null)
             settingsOnPauseScreen.SetActive(false);
+
+        shieldManager = FindObjectOfType<ShieldManager>();
+        _originalGravityScale = myRigitbody.gravityScale;
     }
 
     void Update()
@@ -155,16 +162,38 @@ public class SteffScript : MonoBehaviour
 
         if (isPaused) return;
 
-        // Vogel kippt vor/zurück je nach Rigidbody-Geschwindigkeit
+        // Vogel kippt vor/zurück je nach Rigidbody-Geschwindigkeit + Richtung
         if (steffIsAlive)
         {
-            float targetAngle = Mathf.Clamp(myRigitbody.linearVelocity.y * 5f, -80f, 30f);
+            // Sprite-Richtung und Joint-Position spiegeln
+            spriteRenderer.flipX = DirectionFlipManager.IsFlipped;
+            if (jointOffset != null)
+            {
+                float sign = DirectionFlipManager.IsFlipped ? -1f : 1f;
+                jointOffset.localPosition = new Vector3(
+                    _baseJointX * sign,
+                    jointOffset.localPosition.y,
+                    jointOffset.localPosition.z);
+                // Y-Rotation spiegeln damit angehängte Partikel in die richtige Richtung zeigen
+                jointOffset.localEulerAngles = new Vector3(
+                    jointOffset.localEulerAngles.x,
+                    DirectionFlipManager.IsFlipped ? 180f : 0f,
+                    jointOffset.localEulerAngles.z);
+            }
+
+            // Rotationsfaktor: Flip und Gravity-Inversion jeweils negieren
+            bool negated = GravityInversionManager.IsInverted ^ DirectionFlipManager.IsFlipped;
+            float rotFactor = negated ? -5f : 5f;
+            float targetAngle = Mathf.Clamp(myRigitbody.linearVelocity.y * rotFactor, -80f, 30f);
             transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
         }
 
+        myRigitbody.gravityScale = _originalGravityScale * SpeedManager.SlowMoMultiplier;
+
         if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0)) && steffIsAlive)
         {
-            myRigitbody.linearVelocity = Vector2.up * flapStrength;
+            Vector2 flapDir = GravityInversionManager.IsInverted ? Vector2.down : Vector2.up;
+            myRigitbody.linearVelocity = flapDir * flapStrength * SpeedManager.SlowMoMultiplier;
             if (weeklyMissionManager != null)
             {
                 weeklyMissionManager.UpdateMission(MissionType.TotalJumps, 1);
@@ -181,6 +210,12 @@ public class SteffScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (ShieldManager.IsShieldActive && steffIsAlive)
+        {
+            shieldManager?.AbsorbHit(collision.gameObject);
+            return;
+        }
+
         if (!hitAudioSource.isPlaying && steffIsAlive)
         {
             hitAudioSource.Play();

@@ -88,9 +88,11 @@ crashlytics-build.properties
 # Claude Files/dirs
 .claude/
 .mcp.json
+CLAUDE.md
 
 # Assets
 /[Aa]ssets/YughuesFreeBarkMaterial/
 /[Aa]ssets/YughuesFreeGroundMaterials/
 /[Aa]ssets/TextureHaven/
-    
+    CLAUDE.md
+CLAUDE.md

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using System.Collections;
+using System.Collections.Generic;
 
 public class LogicScript : MonoBehaviour
 {
@@ -35,9 +36,9 @@ public class LogicScript : MonoBehaviour
     public void addCannabisScore(int scoreToAdd)
     {
         Debug.Log("Adding cannabis score: " + scoreToAdd);
-        PlayerPrefs.SetInt("CannabisStash", PlayerPrefs.GetInt("CannabisStash", 0) + scoreToAdd);
-        PlayerPrefs.Save();
-        cannabisStashText.text = PlayerPrefs.GetInt("CannabisStash", 0).ToString();
+        int newStash = PlayerPrefs.GetInt("CannabisStash", 0) + scoreToAdd;
+        CloudSaveManager.Instance.SaveInt("CannabisStash", newStash);
+        cannabisStashText.text = newStash.ToString();
 
         collectedLeavesInCurrentRun += scoreToAdd;
 
@@ -101,8 +102,7 @@ public class LogicScript : MonoBehaviour
             if (playerScore > rankedHighScore)
             {
                 istNeuerRekord = true;
-                PlayerPrefs.SetInt("RankedHighscore", playerScore);
-                PlayerPrefs.Save();
+                CloudSaveManager.Instance.SaveInt("RankedHighscore", playerScore);
                 Debug.Log("Neuer Ranked Highscore: " + playerScore);
                 _ = leaderboardSenderScript.SendRankedScore(playerScore);
             }
@@ -116,8 +116,7 @@ public class LogicScript : MonoBehaviour
             if (playerScore > highScore)
             {
                 istNeuerRekord = true;
-                PlayerPrefs.SetInt("Highscore", playerScore);
-                PlayerPrefs.Save();
+                CloudSaveManager.Instance.SaveInt("Highscore", playerScore);
                 Debug.Log("New high score saved: " + playerScore);
                 _ = leaderboardSenderScript.SendScore(playerScore);
             }
@@ -183,11 +182,13 @@ public class LogicScript : MonoBehaviour
             Debug.Log("Updating missions from OnRunEnd");
 
             // ⏫ NEU: Gesamtscore berechnen
-            int previousTotalScore = PlayerPrefs.GetInt("TotalScore", 0);
-            int newTotalScore = previousTotalScore + score;
-            PlayerPrefs.SetInt("TotalScore", newTotalScore);
-            PlayerPrefs.SetInt("TotalRuns", PlayerPrefs.GetInt("TotalRuns", 0) + 1);
-            PlayerPrefs.Save();
+            int newTotalScore = PlayerPrefs.GetInt("TotalScore", 0) + score;
+            int newTotalRuns = PlayerPrefs.GetInt("TotalRuns", 0) + 1;
+            CloudSaveManager.Instance.SaveBatch(new Dictionary<string, object>
+            {
+                { "TotalScore", newTotalScore },
+                { "TotalRuns",  newTotalRuns }
+            });
 
             WeeklyMissionManager.Instance.UpdateMission(MissionType.TotalScore, score);
 

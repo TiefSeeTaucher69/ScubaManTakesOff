@@ -138,7 +138,7 @@ public class WeeklyMissionManager : MonoBehaviour
             Debug.Log($"Mission: {mission.description}, Type: {mission.type}, Goal: {mission.goal}");
         }
 
-        PlayerPrefs.SetString("WeeklyMissionStartTime", weekStart.ToBinary().ToString());
+        CloudSaveManager.Instance.SaveString("WeeklyMissionStartTime", weekStart.ToBinary().ToString());
         SaveMissionsToPrefs();
 
         // Clear all reward collected flags for new missions
@@ -148,8 +148,7 @@ public class WeeklyMissionManager : MonoBehaviour
     public void SaveMissionsToPrefs()
     {
         string json = JsonUtility.ToJson(new MissionWrapper { missions = activeMissions });
-        PlayerPrefs.SetString("WeeklyMissions", json);
-        PlayerPrefs.Save();
+        CloudSaveManager.Instance.SaveString("WeeklyMissions", json);
         Debug.Log("Missionen gespeichert: " + json);
     }
 
@@ -313,8 +312,7 @@ public class WeeklyMissionManager : MonoBehaviour
 
     public void MarkRewardCollected(string missionId)
     {
-        PlayerPrefs.SetInt($"MissionRewardCollected_{missionId}", 1);
-        PlayerPrefs.Save();
+        CloudSaveManager.Instance.SaveInt($"MissionRewardCollected_{missionId}", 1);
         Debug.Log($"Belohnung für Mission {missionId} als eingesammelt markiert.");
     }
 
@@ -325,6 +323,8 @@ public class WeeklyMissionManager : MonoBehaviour
             PlayerPrefs.DeleteKey($"MissionRewardCollected_{mission.id}");
         }
         PlayerPrefs.Save();
+        // Hinweis: Gelöschte Keys werden nicht aktiv aus der Cloud entfernt,
+        // LoadAllAsync überschreibt sie beim nächsten Login neu.
     }
 
     [System.Serializable]

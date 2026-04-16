@@ -1,142 +1,199 @@
-# Flappy Steff – Projektkontext für Claude
+# Scuba Man Takes Off – Project Context for Claude
 
-## Was ist das?
-PC Flappy-Bird-Klon in Unity (URP, Unity 6). Einzelspieler. Deutsche UI und Kommentare.
+## What is this?
+PC Flappy-Bird clone in Unity (URP, Unity 6). Single-player.
 GitHub: https://github.com/TiefSeeTaucher69/FlappySteff
 
-## Szenen-Reihenfolge
-BootScene → FirstOpen (nur erstes Mal) → MainMenu → GameScene
+## Language Rule
+**All visible in-game text must be in English** — UI labels, button text, feedback messages, shop card text, tooltips, error messages shown to the player, etc.
+Code comments may be in German or English.
 
-**Hinweis:** ItemShop, SettingsScene und EscapeScene existieren **nicht mehr als eigene Szenen** — sie sind als Panels in MainMenu integriert (Pnl_Shop, Pnl_Settings, Quit-Panel).
+## Scene Order
+BootScene → FirstOpen (first time only) → MainMenu → GameScene
+
+**Note:** ItemShop, SettingsScene and EscapeScene **no longer exist as separate scenes** — they are integrated as panels in MainMenu (Pnl_Shop, Pnl_Settings, Quit-Panel).
 
 ## Skins
 | Name | Status | PlayerPrefs-Key |
 |------|--------|----------------|
-| `benjo-bird` | **Default (kostenlos, immer owned)** | — |
-| `ginger-bird` | Kaufbar (25 Cannabis) | `HasSkin_ginger-bird` |
-| `tom-bird` | Kaufbar (25 Cannabis) | `HasSkin_tom-bird` |
-| `bennet-bird` | Kaufbar (25 Cannabis) | `HasSkin_bennet-bird` |
-| `jan-bird` | Kaufbar (25 Cannabis) | `HasSkin_jan-bird` |
+| `benjo-bird` | **Default (free, always owned)** | — |
+| `ginger-bird` | Buyable (25 Cannabis) | `HasSkin_ginger-bird` |
+| `tom-bird` | Buyable (25 Cannabis) | `HasSkin_tom-bird` |
+| `bennet-bird` | Buyable (25 Cannabis) | `HasSkin_bennet-bird` |
+| `jan-bird` | Buyable (25 Cannabis) | `HasSkin_jan-bird` |
+| `paulaner-bird` | Buyable (25 Cannabis) | `HasSkin_paulaner-bird` |
 
-Sprites liegen in `Assets/Resources/Skins/`. Werden per `Resources.Load<Sprite>("Skins/<name>")` geladen.
-Aktiver Skin: PlayerPrefs `ActiveSkin` (Default: `"benjo-bird"`)
+Sprites in `Assets/Resources/Skins/`. Loaded via `Resources.Load<Sprite>("Skins/<name>")`.
+Active skin: PlayerPrefs `ActiveSkin` (Default: `"benjo-bird"`)
 
 ## Items / Power-ups
-| Name | PlayerPrefs-Key | Kosten |
-|------|----------------|--------|
+| Name | PlayerPrefs-Key | Cost |
+|------|----------------|------|
 | Invincible | `HasInvincibleItem` | 50 Cannabis |
 | Shrink | `HasShrinkItem` | 50 Cannabis |
 | Laser | `HasLaserItem` | 50 Cannabis |
 
-Aktives Item: PlayerPrefs `ActiveItem` ("Invincible" / "Shrink" / "Laser" / "")
+Active item: PlayerPrefs `ActiveItem` ("Invincible" / "Shrink" / "Laser" / "")
 
-**Ranked-Regel:** Im Ranked-Modus (`RankedManager.IsRanked == true`) wird `ActiveItem` aus PlayerPrefs ignoriert. Nur das `RankedManager.WeeklyItem` ist aktiv — auch ohne Kauf. Alle drei Manager (InvincibilityManager, ShrinkManager, LaserManager) prüfen: `bool isActiveItem = !RankedManager.IsRanked && PlayerPrefs.GetString("ActiveItem") == "..."`.
+**Ranked rule:** In Ranked mode (`RankedManager.IsRanked == true`) `ActiveItem` from PlayerPrefs is ignored. Only `RankedManager.WeeklyItem` is active — even without purchase. All three managers (InvincibilityManager, ShrinkManager, LaserManager) check: `bool isActiveItem = !RankedManager.IsRanked && PlayerPrefs.GetString("ActiveItem") == "..."`.
 
 ## Trails
-| Name | PlayerPrefs-Key | Kosten |
-|------|----------------|--------|
+| Name | PlayerPrefs-Key | Cost |
+|------|----------------|------|
 | Red | `HasTrailRed` | 20 Cannabis |
 | Purple | `HasTrailPurple` | 20 Cannabis |
 | Blue | `HasTrailBlue` | 20 Cannabis |
 
-Aktiver Trail: PlayerPrefs `ActiveTrail` ("TrailRed" / "TrailPurple" / "TrailBlue" / "")
+Active trail: PlayerPrefs `ActiveTrail` ("TrailRed" / "TrailPurple" / "TrailBlue" / "")
+
+## Biomes
+| Name | PlayerPrefs-Key | Cost |
+|------|----------------|------|
+| Mountain | — (default, always owned) | — |
+| Others | `HasBiome_[name]` | TBD |
+
+Active biome: PlayerPrefs `ActiveBiome` (Default: `"Mountain"`)
+- `BiomeManager.cs` in GameScene applies the biome on `Awake()`: sets background texture (scrolling parallax, two tiles) + pipe material (`BiomeManager.ActivePipeMaterial`)
+- Background scrolls at `parallaxFactor` relative to pipe speed; direction-aware (respects `DirectionFlipManager.IsFlipped`)
+- Fallback: solid color if no texture assigned
 
 ## Pets
-| Name | PlayerPrefs-Key | Kosten |
-|------|----------------|--------|
-| z.B. BlackCat | `HasPetBlackCat` | 100 Cannabis |
+| Name | PlayerPrefs-Key | Cost |
+|------|----------------|------|
+| e.g. BlackCat | `HasPetBlackCat` | 100 Cannabis |
 
-Aktives Pet: PlayerPrefs `ActivePet` (z.B. `"BlackCat"` / `""`)
-- Pets folgen dem Bird, sammeln Cannabis-Blätter ein (geben +1 CannabisStash)
-- In **Ranked kein Pet** (`RankedManager.IsRanked` → PetManager spawnt nichts)
-- Pet-Prefabs aus FantasyMonsters Asset-Pack (Skeletal Animation, `Monster`-Komponente)
-- `PetManager.cs` in GameScene spawnt das aktive Pet
-- `PetCompanionScript.cs` per `AddComponent` zur Laufzeit hinzugefügt, `Init(steff, logic, detectionRadius, seekSpeed)` aufrufen
-- Cannabis-Blatt-Struktur: Root hat `CannabisMovementScript`, Child (`cannabis_0`) hat `CannabisCollisionScript` + Collider + Sprite → Pet scannt per `FindObjectsByType<CannabisCollisionScript>` (nicht Root!)
+Active pet: PlayerPrefs `ActivePet` (e.g. `"BlackCat"` / `""`)
+- Pets follow the bird, collect cannabis leaves (+1 CannabisStash)
+- **No pet in Ranked** (`RankedManager.IsRanked` → PetManager spawns nothing)
+- Pet prefabs from FantasyMonsters Asset Pack (Skeletal Animation, `Monster` component)
+- `PetManager.cs` in GameScene spawns the active pet
+- `PetCompanionScript.cs` added via `AddComponent` at runtime, call `Init(steff, logic, detectionRadius, seekSpeed)`
+- Cannabis leaf structure: Root has `CannabisMovementScript`, Child (`cannabis_0`) has `CannabisCollisionScript` + Collider + Sprite → Pet scans via `FindObjectsByType<CannabisCollisionScript>` (not Root!)
 
-## Wichtige PlayerPrefs-Keys
-| Key | Typ | Bedeutung |
-|-----|-----|-----------|
-| `Username` | string | Spielername (auch als Unity Auth Display Name gesetzt) |
-| `Highscore` | int | Bester Score (Quickplay) |
-| `RankedHighscore` | int | Bester Score (Ranked) |
-| `CannabisStash` | int | In-Game Währung |
-| `TotalScore` | int | Kumulierter Gesamtscore |
-| `lastRewardDate` | string | Datum der letzten Daily Reward (yyyy-MM-dd) |
-| `WeeklyMissions` | string (JSON) | Aktive Wochenmissionen |
-| `WeeklyMissionStartTime` | string | Startdatum der aktuellen Missionswoche (binary long) |
-| `VSyncEnabled` | int | 0=aus, 1=an |
-| `FPSCap` | int | 0=30, 1=60, 2=120, 3=240, 4=unlimitiert |
+## Gameplay Events (Quickplay only, disabled in Ranked)
+
+### Direction Flip (`DirectionFlipManager.cs`)
+- Reverses pipe movement direction for `flipDuration` (10s)
+- First trigger: random 25–45s; cooldown between events: 5–30s
+- Mutual exclusion: won't trigger while `GravityInversionManager.IsActive`
+- Static API: `DirectionFlipManager.IsFlipped`, `DirectionFlipManager.IsActive`
+- On flip moment: destroys pipes that have already passed the bird (old direction), force-spawns a new pipe, triggers camera shake
+- Indicator panel: animated arrow cascade + colored wipe tint (purple)
+- `BiomeManager` and `PipeMoveScript`/`CannabisMovementScript` all read `IsFlipped` to reverse movement
+
+### Gravity Inversion (`GravityInversionManager.cs`)
+- Inverts bird gravity for `invertDuration` (7s); `gravityScale = -originalGravity * 0.75f`
+- First trigger: random 30–50s; cooldown: 5–30s
+- Mutual exclusion: won't trigger while `DirectionFlipManager.IsActive`
+- Static API: `GravityInversionManager.IsInverted`, `GravityInversionManager.IsActive`
+- Indicator panel: animated arrow cascade + colored wipe tint (orange)
+
+## Important PlayerPrefs Keys
+| Key | Type | Meaning |
+|-----|------|---------|
+| `Username` | string | Player name (also set as Unity Auth Display Name) |
+| `Highscore` | int | Best score (Quickplay) |
+| `RankedHighscore` | int | Best score (Ranked) |
+| `CannabisStash` | int | In-game currency |
+| `TotalScore` | int | Cumulative total score |
+| `TotalRuns` | int | Total number of runs played |
+| `lastRewardDate` | string | Date of last daily reward (yyyy-MM-dd) |
+| `WeeklyMissions` | string (JSON) | Active weekly missions |
+| `WeeklyMissionStartTime` | string | Start date of current mission week (binary long) |
+| `VSyncEnabled` | int | 0=off, 1=on |
+| `FPSCap` | int | 0=30, 1=60, 2=120, 3=240, 4=unlimited |
 | `ResolutionIndex` | int | Index in Screen.resolutions |
-| `ActivePet` | string | Aktives Pet (z.B. `"BlackCat"`) |
-| `HasPet[Name]` | int | 0/1 ob Pet gekauft |
+| `ActivePet` | string | Active pet (e.g. `"BlackCat"`) |
+| `HasPet[Name]` | int | 0/1 whether pet is purchased |
+| `ActiveBiome` | string | Active biome (default `"Mountain"`) |
+| `PlayerAccountsLinked` | int | 0/1 — 1 = player has logged in via Unity Player Accounts |
 
 ## Backend: Unity Gaming Services
-Migriert von eigenem Raspberry-Pi-Server (api.benjo.online) auf Unity Services.
 
-| Service | Zweck |
-|---------|-------|
-| Unity Authentication | Anonymous Sign-In, Display Name = Username |
-| Unity Leaderboards | Score-Submission und -Anzeige |
+| Service | Purpose |
+|---------|---------|
+| Unity Player Accounts | Browser-based OAuth login (Google, email/password etc.) |
+| Unity Authentication | `SignInWithUnityAsync(accessToken)` after Player Accounts login |
+| Unity Leaderboards | Score submission and display |
+| Unity Cloud Save | Persistent player data synced to cloud |
 
-**Leaderboard-IDs:** `FlappySteffLeaderboard` (Quickplay), `FlappySteffRankedLeaderboard` (Ranked)
+**Leaderboard IDs:** `FlappySteffLeaderboard` (Quickplay), `FlappySteffRankedLeaderboard` (Ranked)
 
-Initialisierung: in `BootScene/UpdateCheckerScript.cs` (async Start). Jede Szene hat eigenen Fallback-Init-Check falls direkt im Editor gestartet.
+### Authentication Flow
+1. BootScene (`UpdateCheckerScript.cs`): if `PlayerAccountsLinked == 1` and session token exists → auto-login via `SignInAnonymouslyAsync()` (restores session), then `CloudSaveManager.LoadAllAsync()`
+2. FirstOpen (`AuthScript.cs`): Login button → `PlayerAccountService.Instance.StartSignInAsync()` opens browser; **subscribe to `SignedIn` event BEFORE calling `StartSignInAsync()`** (event fires while task awaits, i.e. during token exchange after auth-code redirect); after `SignedIn` fires → `SignInWithUnityAsync(AccessToken)`
+3. Each scene has a fallback init check when started directly in the Editor
 
-Kein Echtzeit-Multiplayer. Netcode for GameObjects ist installiert aber ungenutzt.
+### Cloud Save (`CloudSaveManager.cs`)
+DontDestroyOnLoad singleton. Write pattern: write to PlayerPrefs immediately, then async push to cloud (fire-and-forget).
+On login: `LoadAllAsync()` loads all cloud keys into PlayerPrefs — **cloud wins over local**.
 
-## Ranked-Modus
-- `RankedManager` ist DontDestroyOnLoad Singleton (`Assets/Scripts/Game/RankedManager.cs`)
-- Wöchentlich deterministisches Item via ISO-Kalenderwoche-Seed (`RankedManager.WeeklyItem`)
-- `RankedManager.IsRanked` (static bool) wird in MainMenu gesetzt
-- Kein Pet in Ranked
-- Eigenes Leaderboard
-- Im MainMenu: Play-Bar mit Quickplay/Ranked-Buttons, bei Ranked zeigt `PnlRankedInfo` das Weekly Item (Icon + Name) und Reset-Zeit
+**Keys synced to cloud:** `CannabisStash`, `Highscore`, `RankedHighscore`, `TotalScore`, `TotalRuns`, all item/trail/skin/pet ownership keys, `Username`
+**NOT synced:** `VSyncEnabled`, `FPSCap`, `ResolutionIndex`, active selections (`ActiveSkin`, `ActiveTrail`, `ActiveItem`, `ActivePet`, `ActiveBiome`)
 
-## Wochenmissionen
-Deterministischer Seed basierend auf ISO-Kalenderwoche + Jahr (z.B. `202614`).
-Alle Spieler bekommen dieselben 3 Missionen pro Woche. Vollständig offline/lokal.
+Use `CloudSaveManager.Instance.SaveInt(key, value)` / `.SaveString(key, value)` / `.SaveBatch(dict)` instead of raw `PlayerPrefs.Set*` for synced keys.
 
-## Musik
-`MusicPlayerScript.cs` in GameScene: Pitch skaliert mit Pipe-Speed von 1.0 (Startgeschwindigkeit) bis 1.5 (Maximalgeschwindigkeit) via `Mathf.InverseLerp(SpeedManager.startSpeed, SpeedManager.maxSpeed, currentSpeed)`.
+No real-time multiplayer. Netcode for GameObjects is installed but unused.
+
+## Ranked Mode
+- `RankedManager` is DontDestroyOnLoad Singleton (`Assets/Scripts/Game/RankedManager.cs`)
+- Weekly deterministic item via ISO calendar week seed (`RankedManager.WeeklyItem`)
+- `RankedManager.IsRanked` (static bool) set in MainMenu
+- No pets, no direction flip, no gravity inversion in Ranked
+- Separate leaderboard
+- In MainMenu: Play-Bar with Quickplay/Ranked buttons; Ranked shows `PnlRankedInfo` with weekly item (icon + name) and reset time
+
+## Weekly Missions
+Deterministic seed based on ISO calendar week + year (e.g. `202614`).
+All players get the same 3 missions per week. Fully offline/local.
+
+## Music
+`MusicPlayerScript.cs` in GameScene: Pitch scales with pipe speed from 1.0 (start speed) to 1.5 (max speed) via `Mathf.InverseLerp(SpeedManager.startSpeed, SpeedManager.maxSpeed, currentSpeed)`.
 
 ## Discord Rich Presence
-`Assets/Scripts/Discord/DiscordRichPresenceManager.cs` — DontDestroyOnLoad Singleton, in MainMenu-Szene platziert.
-- Bibliothek: Lachee/DiscordRPC (`Assets/Plugins/DiscordRPC/DiscordRPC.dll`)
-- Client ID im Inspector (`clientId`-Feld)
-- Zeigt je nach Szene: "Im Hauptmenü" / "Score: X | Quickplay" / "Score: X | Ranked" / "Im Shop"
-- Score-Update alle 5 Sekunden via Polling auf `LogicScript.playerScore`
+`Assets/Scripts/Discord/DiscordRichPresenceManager.cs` — DontDestroyOnLoad Singleton, placed in MainMenu scene.
+- Library: Lachee/DiscordRPC (`Assets/Plugins/DiscordRPC/DiscordRPC.dll`)
+- Client ID in Inspector (`clientId` field)
+- Shows per scene: "In Main Menu" / "Score: X | Quickplay" / "Score: X | Ranked" / "In Shop"
+- Score update every 5 seconds via polling on `LogicScript.playerScore`
 
-## MainMenu UI-Architektur
+## MainMenu UI Architecture
 
-### Tab-Navigation (TabController.cs)
-`Canvas` hat 5 Haupt-Panels: `Pnl_Play`, `Pnl_Scoreboard`, `Pnl_Missions`, `Pnl_Shop`, `Pnl_Settings`.
-`TabController.cs` schaltet zwischen ihnen um. Jedes Panel hat eine `CanvasGroup` für Fade-In (alpha 0→1, 0.2s).
-TabBar hat ein `Img_Slider` (grün, `LayoutElement.ignoreLayout=true`) das per Coroutine animiert wird.
+### Tab Navigation (TabController.cs)
+`Canvas` has 5 main panels: `Pnl_Play`, `Pnl_Scoreboard`, `Pnl_Missions`, `Pnl_Shop`, `Pnl_Settings`.
+`TabController.cs` switches between them. Each panel has a `CanvasGroup` for fade-in (alpha 0→1, 0.2s).
+TabBar has an `Img_Slider` (green, `LayoutElement.ignoreLayout=true`) that is animated via Coroutine.
+
+### Profile (in Pnl_Settings or own panel — `ProfileScript.cs`)
+Shows: username, avatar (first letter of username), Quickplay/Ranked highscore, total score, total runs, avg score.
+- Rename: `UpdatePlayerNameAsync` + `CloudSaveManager.SaveString("Username", name)`
+- Logout: `AuthenticationService.SignOut()` + `PlayerAccountService.SignOut()`, clears `Username` + `PlayerAccountsLinked`, loads FirstOpen
 
 ### Shop (Pnl_Shop)
-Shop ist ein Tab in MainMenu, kein eigener Scene-Load mehr.
-`ShopBar` hat `HorizontalLayoutGroup` + ein `Img_Slider` Child mit `LayoutElement.ignoreLayout=true`.
-`ShopPageSwitcher.cs` schaltet zwischen 5 Kategorien: Items, Trails, Skins, Pets, Biomes.
-Jedes Shop-Site-Panel (`ItemShop Site` etc.) hat eine `CanvasGroup` für Fade-In (0.15s).
-Slider-Position wird via `indicator.GetComponentInParent<Button>().localPosition.x` ermittelt.
+Shop is a tab in MainMenu, no longer a separate scene load.
+`ShopBar` has `HorizontalLayoutGroup` + an `Img_Slider` Child with `LayoutElement.ignoreLayout=true`.
+`ShopPageSwitcher.cs` switches between 5 categories: Items, Trails, Skins, Pets, Biomes.
+Each Shop site panel (`ItemShop Site` etc.) has a `CanvasGroup` for fade-in (0.15s).
+Slider position determined via `indicator.GetComponentInParent<Button>().localPosition.x`.
 
-### Shop-Karten (ShopCardScript.cs)
-Jede generierte Shop-Karte spielt beim Erscheinen eine Pop-in Animation (Scale 0.8→1.0, 0.15s).
+### Shop Cards (ShopCardScript.cs)
+Each generated shop card plays a pop-in animation on appearance (Scale 0.8→1.0, 0.15s).
+Buy/Activate use `CloudSaveManager.Instance.SaveBatch/SaveString` — not raw PlayerPrefs.
 
-### AnimateSlider-Pattern (in TabController, ShopPageSwitcher, MenuHandlerScript)
-Alle Slider-Animationen: `Mathf.Lerp` auf `localPosition.x` + `sizeDelta.x` in Coroutine (0.2s).
-`SnapSlider()` setzt initiale Position ohne Animation (wird in `Start()` vor erstem `SwitchTab()` aufgerufen).
+### AnimateSlider Pattern (TabController, ShopPageSwitcher, MenuHandlerScript)
+All slider animations: `Mathf.Lerp` on `localPosition.x` + `sizeDelta.x` in Coroutine (0.2s).
+`SnapSlider()` sets initial position without animation (called in `Start()` before first `SwitchTab()`).
 
-### Wichtiger Unity-Hinweis
-`GameObject.Find()` findet **keine inaktiven** GameObjects → stattdessen `canvas.transform.Find("Pnl_Shop/...")` nutzen.
+### Important Unity Note
+`GameObject.Find()` does **not** find inactive GameObjects → use `canvas.transform.Find("Pnl_Shop/...")` instead.
 
-## Architektur-Entscheidungen
-- `WeeklyMissionManager` ist DontDestroyOnLoad Singleton
-- `RankedManager` ist DontDestroyOnLoad Singleton
-- `CursorManager` ist DontDestroyOnLoad Singleton (versteckt Cursor im Gameplay, zeigt ihn bei Pause/Tod/Menü)
-- `DiscordRichPresenceManager` ist DontDestroyOnLoad Singleton
-- Alle Käufe/Fortschritte in PlayerPrefs (kein Cloud Save)
-- Auto-Update über GitHub Releases API (lädt .exe Installer herunter)
-- Spieler-Eingabe: Tastatur + Maus + Xbox Controller (JoystickButton*)
-- `SpeedManagerScript.cs`: `startSpeed = 5f`, `maxSpeed` = Endwert; `SpeedManagerCannabisScript` für Cannabis-Blatt-Geschwindigkeit
+## Architecture Decisions
+- `WeeklyMissionManager` is DontDestroyOnLoad Singleton
+- `RankedManager` is DontDestroyOnLoad Singleton
+- `CloudSaveManager` is DontDestroyOnLoad Singleton (lazy-created if missing)
+- `CursorManager` is DontDestroyOnLoad Singleton (hides cursor during gameplay, shows on pause/death/menu)
+- `DiscordRichPresenceManager` is DontDestroyOnLoad Singleton
+- Purchases/progress: PlayerPrefs locally + Unity Cloud Save remotely (via CloudSaveManager)
+- Auto-update via GitHub Releases API (downloads .exe installer)
+- Player input: keyboard + mouse + Xbox controller (JoystickButton*)
+- `SpeedManagerScript.cs`: `startSpeed = 5f`, `maxSpeed` = end value; `SpeedManagerCannabisScript` for cannabis leaf speed

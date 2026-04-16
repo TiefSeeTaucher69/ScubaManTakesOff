@@ -235,8 +235,8 @@ Camera:
   m_GameObject: {fileID: 1273861710}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.06666667, g: 0.078431375, b: 0.101960786, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -348,6 +348,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 282e55ed11e9def4fbab495032afd9d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraShakeScript
+  deathSound: {fileID: 0}
+  sfxMixerGroup: {fileID: 0}
 --- !u!224 &112569489570156302
 RectTransform:
   m_ObjectHideFlags: 0

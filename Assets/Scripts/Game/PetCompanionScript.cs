@@ -10,7 +10,10 @@ public class PetCompanionScript : MonoBehaviour
     private float _smoothTime      = 0.25f;
     private float _attackDuration  = 0.6f;
     private float _scale           = 0.25f;
-    private static readonly Vector3 Offset = new(-1.8f, 0f, 0f);
+    // Offset wird per-frame anhand von IsFlipped berechnet
+    private Vector3 FollowOffset => DirectionFlipManager.IsFlipped
+        ? new Vector3(1.8f, 0f, 0f)   // Pet rechts vom Vogel wenn nach links geflippt
+        : new Vector3(-1.8f, 0f, 0f); // Pet links vom Vogel (normal)
 
     private Monster    _monster;
     private LogicScript _logic;
@@ -37,8 +40,7 @@ public class PetCompanionScript : MonoBehaviour
         foreach (var c in GetComponentsInChildren<Collider2D>())
             c.enabled = false;
 
-        // Immer nach rechts schauen — kein Flippen
-        transform.localScale = new Vector3(-_scale, _scale, 1f);
+        transform.localScale = new Vector3(-_scale, _scale, 1f); // negatives X = nach rechts
         _monster?.SetState(MonsterState.Walk);
     }
 
@@ -62,6 +64,10 @@ public class PetCompanionScript : MonoBehaviour
             Mourn();
             return;
         }
+
+        // Blickrichtung je nach Spielrichtung aktualisieren
+        float scaleX = DirectionFlipManager.IsFlipped ? _scale : -_scale;
+        transform.localScale = new Vector3(scaleX, _scale, 1f);
 
         switch (_state)
         {
@@ -104,12 +110,12 @@ public class PetCompanionScript : MonoBehaviour
         _sinking   = true;
     }
 
-    void Follow() => SmoothMove(_steff.transform.position + Offset);
+    void Follow() => SmoothMove(_steff.transform.position + FollowOffset);
 
     void Return()
     {
-        SmoothMove(_steff.transform.position + Offset);
-        if (Near(_steff.transform.position + Offset, 0.5f))
+        SmoothMove(_steff.transform.position + FollowOffset);
+        if (Near(_steff.transform.position + FollowOffset, 0.5f))
             _state = State.Following;
     }
 
@@ -170,8 +176,11 @@ public class PetCompanionScript : MonoBehaviour
         // Blatt-Position. CannabisMovementScript sitzt auf dem Root, der ~10 Einheiten daneben liegt.
         foreach (var l in FindObjectsByType<CannabisCollisionScript>(FindObjectsSortMode.None))
         {
-            // Nur Blätter die noch rechts vom Pet sind (die anderen fliegen schon vorbei)
-            if (l.transform.position.x < transform.position.x - 2f) continue;
+            // Nur Blätter die noch VOR dem Pet sind (noch nicht vorbeigeflogen)
+            bool passedPet = DirectionFlipManager.IsFlipped
+                ? l.transform.position.x > transform.position.x + 2f  // flipped: Blätter kommen von links
+                : l.transform.position.x < transform.position.x - 2f; // normal: Blätter kommen von rechts
+            if (passedPet) continue;
 
             float d = Vector3.Distance(transform.position, l.transform.position);
             if (d < min)

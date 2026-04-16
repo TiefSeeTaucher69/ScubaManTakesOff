@@ -97,18 +97,19 @@ public class DailyReward : MonoBehaviour
         if (coinAudioSource != null)
             coinAudioSource.Play();
 
-        // 🎁 Animation starten
-        StartCoroutine(AnimateRewardImage());
-
-        PlayerPrefs.SetString(rewardKey, currentDate);
         rewardButton.interactable = false;
 
+        int newStash = PlayerPrefs.GetInt("CannabisStash", 0) + cannabisRewardToAdd;
         Debug.Log("Adding cannabis score: " + cannabisRewardToAdd);
-        PlayerPrefs.SetInt("CannabisStash", PlayerPrefs.GetInt("CannabisStash", 0) + cannabisRewardToAdd);
-        PlayerPrefs.Save();
-        cannabisStashText.text = PlayerPrefs.GetInt("CannabisStash", 0).ToString();
+        CloudSaveManager.Instance.SaveBatch(new System.Collections.Generic.Dictionary<string, object>
+        {
+            { "CannabisStash",  newStash     },
+            { rewardKey,        currentDate  }
+        });
+        cannabisStashText.text = newStash.ToString();
 
-        statusText.text = "✅ Belohnung erfolgreich abgeholt!";
+        ToastManager.Show($"Daily reward! +{cannabisRewardToAdd} Cannabis", ToastType.Reward);
+        ClosePanel();
     }
 
     IEnumerator FadeInPanel()

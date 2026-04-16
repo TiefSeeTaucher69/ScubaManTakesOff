@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -60,12 +61,22 @@ public class ShopCardScript : MonoBehaviour
     void OnBuyClicked()
     {
         if (data.alwaysOwned) return;
-        int stash = PlayerPrefs.GetInt("CannabisStash", 0);
-        if (stash < data.cost || PlayerPrefs.GetInt(data.ownedKey, 0) == 1) return;
+        if (PlayerPrefs.GetInt(data.ownedKey, 0) == 1) return;
 
-        PlayerPrefs.SetInt(data.ownedKey, 1);
-        PlayerPrefs.SetInt("CannabisStash", stash - data.cost);
-        PlayerPrefs.Save();
+        int stash = PlayerPrefs.GetInt("CannabisStash", 0);
+        if (stash < data.cost)
+        {
+            ToastManager.Show("Not enough Cannabis!", ToastType.Warning);
+            return;
+        }
+
+        int newStash = stash - data.cost;
+        CloudSaveManager.Instance.SaveBatch(new Dictionary<string, object>
+        {
+            { data.ownedKey,    1        },
+            { "CannabisStash",  newStash }
+        });
+        ToastManager.Show($"{data.itemName} purchased!", ToastType.Success);
         onChanged?.Invoke();
     }
 
@@ -74,8 +85,10 @@ public class ShopCardScript : MonoBehaviour
         bool owned = data.alwaysOwned || PlayerPrefs.GetInt(data.ownedKey, 0) == 1;
         if (!owned) return;
 
-        PlayerPrefs.SetString(data.activePrefsKey, data.activeValue);
-        PlayerPrefs.Save();
+        bool alreadyActive = PlayerPrefs.GetString(data.activePrefsKey) == data.activeValue;
+        CloudSaveManager.Instance.SaveString(data.activePrefsKey, data.activeValue);
+        if (!alreadyActive)
+            ToastManager.Show($"{data.itemName} activated!", ToastType.Info);
         onChanged?.Invoke();
     }
 

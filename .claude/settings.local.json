@@ -30,7 +30,24 @@
       "Bash(wc -l /e/Unity/Tutorial/Tutorial/Assets/Scripts/Game/*.cs)",
       "Bash(grep -l \"gameOverScreen\\\\|gameOver\" \"e:\\\\Unity\\\\Tutorial\\\\Tutorial\\\\Assets\\\\Scripts\\\\Game\"/*.cs)",
       "Bash(npx unity-mcp-cli:*)",
-      "Bash(python -c ':*)"
+      "Bash(python -c ':*)",
+      "Bash(grep -E \"\\\\.cs$\")",
+      "Bash(xargs wc:*)",
+      "Bash(find /e/Unity/Tutorial/Tutorial/Assets/Scripts/Game -type f -name \"*.cs\" -exec grep -l \"Color\\\\|Overlay\\\\|Tint\\\\|Flash\\\\|visual\\\\|effect\" {} \\\\;)",
+      "Bash(grep -r \"gravityScale\\\\|velocity\\\\|Rigidbody2D\\\\|linearVelocity\" /e/Unity/Tutorial/Tutorial/Assets/Scripts/Game/*.cs)",
+      "Bash(find /e/Unity/Tutorial/Tutorial/Assets -name \"*.cs\" -exec grep -l \"CanvasGroup\\\\|Alpha\\\\|Fade\" {} \\\\;)",
+      "Bash(grep -A100 \"^--- !u!1 &1341624976$\" \"e:/Unity/Tutorial/Tutorial/Assets/Scenes/GameScene.unity\")",
+      "Bash(grep -A30 \"^--- !u!1 &823459812$\" \"e:/Unity/Tutorial/Tutorial/Assets/Scenes/GameScene.unity\")",
+      "Bash(grep -A50 \"^--- !u!224 &823459813$\" \"e:/Unity/Tutorial/Tutorial/Assets/Scenes/GameScene.unity\")",
+      "Bash(grep -B5 \"^--- !u!1 &1273886985$\\\\|^--- !u!1 &148126228$\" \"e:/Unity/Tutorial/Tutorial/Assets/Scenes/GameScene.unity\")",
+      "Bash(grep -A3 \"^--- !u!1 &148126228$\" \"e:/Unity/Tutorial/Tutorial/Assets/Scenes/GameScene.unity\")",
+      "Bash(grep -A10 \"^--- !u!1 &148126228$\" \"e:/Unity/Tutorial/Tutorial/Assets/Scenes/GameScene.unity\")",
+      "Bash(grep -A15 \"^--- !u!1 &148126228$\" \"e:/Unity/Tutorial/Tutorial/Assets/Scenes/GameScene.unity\")",
+      "Bash(grep -A50 \"^--- !u!224 &30273934$\" \"e:/Unity/Tutorial/Tutorial/Assets/Scenes/GameScene.unity\")",
+      "mcp__ai-game-developer__console-get-logs",
+      "WebSearch",
+      "Bash(unity-mcp-cli run-system-tool:*)",
+      "Bash(unity-mcp-cli run-tool:*)"
     ]
   }
 }

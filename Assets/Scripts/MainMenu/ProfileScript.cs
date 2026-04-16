@@ -1,7 +1,9 @@
 using System;
 using TMPro;
 using Unity.Services.Authentication;
+using Unity.Services.Authentication.PlayerAccounts;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ProfileScript : MonoBehaviour
@@ -79,16 +81,28 @@ public class ProfileScript : MonoBehaviour
         {
             await AuthenticationService.Instance.UpdatePlayerNameAsync(newName);
             PlayerPrefs.SetString("Username", newName);
-            PlayerPrefs.Save();
+            CloudSaveManager.Instance.SaveString("Username", newName);
             RefreshProfile();
             renamePanel.SetActive(false);
             usernameDisplay.SetActive(true);
             if (txtFeedback != null) txtFeedback.text = "";
+            ToastManager.Show($"Username set to \"{newName}\"", ToastType.Success);
         }
         catch (Exception e)
         {
             Debug.LogError("Failed to rename: " + e.Message);
             if (txtFeedback != null) txtFeedback.text = "Error: " + e.Message;
+            ToastManager.Show("Failed to update username.", ToastType.Warning);
         }
+    }
+
+    public void OnLogoutClick()
+    {
+        AuthenticationService.Instance.SignOut();
+        try { PlayerAccountService.Instance.SignOut(); } catch { }
+        PlayerPrefs.DeleteKey("Username");
+        PlayerPrefs.DeleteKey("PlayerAccountsLinked");
+        PlayerPrefs.Save();
+        SceneManager.LoadScene("FirstOpen");
     }
 }

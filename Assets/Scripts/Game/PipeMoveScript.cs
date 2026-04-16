@@ -7,10 +7,14 @@ public class PipeMoveScript : MonoBehaviour
 
     void Update()
     {
-        float speed = SpeedManager.currentSpeed;
-        transform.position += Vector3.left * speed * Time.deltaTime;
+        float speed = SpeedManager.currentSpeed * SpeedManager.SlowMoMultiplier;
+        float dir = DirectionFlipManager.IsFlipped ? 1f : -1f;
+        transform.position += Vector3.right * dir * speed * Time.deltaTime;
 
-        if (transform.position.x < deadZone)
+        bool offscreen = DirectionFlipManager.IsFlipped
+            ? transform.position.x > 40f
+            : transform.position.x < deadZone;
+        if (offscreen)
         {
             Destroy(gameObject);
         }

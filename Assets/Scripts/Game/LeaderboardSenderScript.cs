@@ -13,6 +13,7 @@ public class LeaderboardSenderScript : MonoBehaviour
         {
             await LeaderboardsService.Instance.AddPlayerScoreAsync(LeaderboardId, score);
             Debug.Log("Score erfolgreich gesendet: " + score);
+            _ = DiscordRichPresenceManager.FetchRanksAndRefreshAsync();
         }
         catch (System.Exception e)
         {
@@ -26,6 +27,7 @@ public class LeaderboardSenderScript : MonoBehaviour
         {
             await LeaderboardsService.Instance.AddPlayerScoreAsync(RankedLeaderboardId, score);
             Debug.Log("Ranked Score erfolgreich gesendet: " + score);
+            _ = DiscordRichPresenceManager.FetchRanksAndRefreshAsync();
         }
         catch (System.Exception e)
         {

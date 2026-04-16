@@ -30,7 +30,9 @@ public class CannabisSpawnerScript : MonoBehaviour
     {
         float lowestPoint = transform.position.y;
         float highestPoint = transform.position.y + heightOffset;
-        Instantiate(cannabisPrefab, new Vector3(transform.position.x + 10, Random.Range(lowestPoint, highestPoint)), transform.rotation);
+        float baseX = Mathf.Abs(transform.position.x) + 10f;
+        float spawnX = DirectionFlipManager.IsFlipped ? -baseX : baseX;
+        Instantiate(cannabisPrefab, new Vector3(spawnX, Random.Range(lowestPoint, highestPoint)), transform.rotation);
     }
 
 }

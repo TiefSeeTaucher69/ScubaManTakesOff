@@ -32,8 +32,8 @@ public class RankedManager : MonoBehaviour
     {
         int seed = GetWeekSeed();
         var rng = new System.Random(seed);
-        string[] items = { "Invincible", "Shrink", "Laser" };
-        WeeklyItem = items[rng.Next(0, 3)];
+        string[] items = { "Invincible", "Shrink", "Laser", "SlowMo", "Shield" };
+        WeeklyItem = items[rng.Next(0, 5)];
         Debug.Log($"[RankedManager] Woche {seed} – Weekly Item: {WeeklyItem}");
     }
 
@@ -56,9 +56,11 @@ public class RankedManager : MonoBehaviour
         return WeeklyItem switch
         {
             "Invincible" => "Invincible",
-            "Shrink" => "Shrink",
-            "Laser" => "Laser Shot",
-            _ => WeeklyItem
+            "Shrink"     => "Shrink",
+            "Laser"      => "Laser Shot",
+            "SlowMo"     => "Slow-Mo",
+            "Shield"     => "Shield",
+            _            => WeeklyItem
         };
     }
 }

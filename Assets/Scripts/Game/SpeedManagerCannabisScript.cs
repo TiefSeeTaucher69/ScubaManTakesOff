@@ -5,6 +5,7 @@ public class SpeedManagerCannabisScript : MonoBehaviour
     public static float currentSpeed = 10f;
     public static float acceleration = 0.1f;
     public static float maxSpeed = 20f;
+    public static float SlowMoMultiplier = 1f;
 
     void Awake()
     {
@@ -23,6 +24,7 @@ public class SpeedManagerCannabisScript : MonoBehaviour
     public static void ResetSpeed()
     {
         currentSpeed = 10f;
+        SlowMoMultiplier = 1f;
     }
 }
 

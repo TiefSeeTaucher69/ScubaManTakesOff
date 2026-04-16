@@ -47,6 +47,13 @@ public class TrailManager : MonoBehaviour
 
     void Update()
     {
+        // Trail-Position spiegeln wenn Richtung gewechselt wird
+        if (trailInstance != null)
+        {
+            float offsetX = DirectionFlipManager.IsFlipped ? 0.5f : -0.5f;
+            trailInstance.transform.localPosition = new Vector3(offsetX, -0.5f, 0f);
+        }
+
         if (trailParticles != null)
         {
             var main = trailParticles.main;

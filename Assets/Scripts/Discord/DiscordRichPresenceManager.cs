@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Unity.Services.Authentication;
+using Unity.Services.Leaderboards;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using DiscordRPC;
@@ -11,6 +15,10 @@ public class DiscordRichPresenceManager : MonoBehaviour
     private DiscordRpcClient _client;
     private float            _updateTimer;
     private const float      UpdateInterval = 5f;
+
+    // -1 = not on leaderboard / not fetched yet
+    public static int QuickplayRank = -1;
+    public static int RankedRank    = -1;
 
     void Awake()
     {
@@ -41,25 +49,65 @@ public class DiscordRichPresenceManager : MonoBehaviour
         SetPresenceGame(logic.playerScore, RankedManager.IsRanked);
     }
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode _)
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        _updateTimer = UpdateInterval; // sofort beim nächsten Update-Tick updaten
+        _updateTimer = UpdateInterval;
 
         switch (scene.name)
         {
-            case "MainMenu":      SetPresenceMenu("Im Hauptmenü");  break;
-            case "GameScene":     SetPresenceGame(0, RankedManager.IsRanked); break;
-            case "ItemShop":      SetPresenceMenu("Im Shop");       break;
-            case "SettingsScene": SetPresenceMenu("Einstellungen"); break;
+            case "MainMenu":
+                SetPresenceMenu("Im Hauptmenü");
+                var _ = FetchRanksAndRefreshAsync();
+                break;
+            case "GameScene":
+                SetPresenceGame(0, RankedManager.IsRanked);
+                break;
+        }
+    }
+
+    // Called on MainMenu load and after score submission.
+    public static async Task FetchRanksAndRefreshAsync()
+    {
+        if (!AuthenticationService.Instance.IsSignedIn) return;
+
+        try
+        {
+            var entry = await LeaderboardsService.Instance
+                .GetPlayerScoreAsync(LeaderboardSenderScript.LeaderboardId);
+            QuickplayRank = entry.Rank + 1; // 0-based → 1-based
+        }
+        catch { QuickplayRank = -1; }
+
+        try
+        {
+            var entry = await LeaderboardsService.Instance
+                .GetPlayerScoreAsync(LeaderboardSenderScript.RankedLeaderboardId);
+            RankedRank = entry.Rank + 1;
+        }
+        catch { RankedRank = -1; }
+
+        // Refresh presence with updated ranks
+        if (Instance == null) return;
+        string scene = SceneManager.GetActiveScene().name;
+        if (scene == "MainMenu")
+            Instance.SetPresenceMenu("Im Hauptmenü");
+        else if (scene == "GameScene")
+        {
+            var logic = FindObjectOfType<LogicScript>();
+            if (logic != null)
+                Instance.SetPresenceGame(logic.playerScore, RankedManager.IsRanked);
         }
     }
 
     void SetPresenceGame(int score, bool ranked)
     {
+        int    rank     = ranked ? RankedRank : QuickplayRank;
+        string rankText = rank > 0 ? $" | #{rank}" : "";
+
         _client?.SetPresence(new RichPresence
         {
             Details    = $"Score: {score}",
-            State      = ranked ? "Ranked" : "Quickplay",
+            State      = (ranked ? "Ranked" : "Quickplay") + rankText,
             Timestamps = Timestamps.Now,
             Assets     = new DiscordRPC.Assets { LargeImageKey = "icon" }
         });
@@ -67,11 +115,23 @@ public class DiscordRichPresenceManager : MonoBehaviour
 
     void SetPresenceMenu(string details)
     {
+        string rankState = BuildRankState();
+
         _client?.SetPresence(new RichPresence
         {
             Details = details,
+            // Discord requires State to be null or at least 2 chars
+            State   = rankState.Length >= 2 ? rankState : null,
             Assets  = new DiscordRPC.Assets { LargeImageKey = "icon" }
         });
+    }
+
+    static string BuildRankState()
+    {
+        var parts = new List<string>();
+        if (QuickplayRank > 0) parts.Add($"#{QuickplayRank} Quickplay");
+        if (RankedRank    > 0) parts.Add($"#{RankedRank} Ranked");
+        return string.Join(" | ", parts);
     }
 
     void OnDestroy()

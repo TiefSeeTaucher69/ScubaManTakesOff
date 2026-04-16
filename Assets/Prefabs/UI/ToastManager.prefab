@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &77456665540743627
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2739865542767904330}
+  - component: {fileID: 4718570926153838124}
+  m_Layer: 0
+  m_Name: ToastManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2739865542767904330
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 77456665540743627}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4718570926153838124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 77456665540743627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f671977ff8c10b54ab04d52dd7edf535, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToastManager
+  _toastPrefab: {fileID: 7737378639053471244, guid: 4c2e1e2d66752f94a844d1f7654ce6a3, type: 3}
+  _successSprite: {fileID: -7336596661602355153, guid: f215efc4e7908f341b97006ff9ba8ff9, type: 3}
+  _warningSprite: {fileID: 2804852099479475625, guid: cc6fc2abf94a6e648b6a217e4b69d071, type: 3}
+  _infoSprite: {fileID: -7233926184784112610, guid: fa708f3574b91a94ebb54074d84d1a12, type: 3}
+  _rewardSprite: {fileID: -7650668756511597346, guid: 637e78dc824b9e44ca95df3a48d0184d, type: 3}
+  _successColor: {r: 0.2, g: 0.85, b: 0.2, a: 1}
+  _warningColor: {r: 1, g: 0.6, b: 0, a: 1}
+  _infoColor: {r: 0.2, g: 0.6, b: 1, a: 1}
+  _rewardColor: {r: 0.65, g: 0.2, b: 1, a: 1}
+  _defaultDuration: 3
+  _maxVisible: 3

@@ -8,7 +8,7 @@ public class LaserShot : MonoBehaviour
 
     void Start()
     {
-        Destroy(gameObject, lifetime); // Nach X Sekunden zerstören
+        Destroy(gameObject, lifetime); // Nach X Sekunden zerstï¿½ren
     }
 
     void Update()
@@ -20,8 +20,8 @@ public class LaserShot : MonoBehaviour
     {
         if (other.CompareTag("Pipe"))
         {
-            // Pipe zerstören
-            Destroy(other.gameObject);
+            // Pipe mit Crumble-Effekt zerstÃ¶ren
+            PipeBreaker.Break(other.gameObject);
 
             // Hitmarker erzeugen an dieser Position
             if (hitEffectPrefab != null)
@@ -29,7 +29,7 @@ public class LaserShot : MonoBehaviour
                 Instantiate(hitEffectPrefab, transform.position, Quaternion.identity);
             }
 
-            // Laser selbst zerstören
+            // Laser selbst zerstÃ¶ren
             Destroy(gameObject);
         }
     }

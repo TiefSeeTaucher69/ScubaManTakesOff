@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 75db2b1c5416e844fa505d42cb2502f5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 322810
+  packageName: Pyro - Toast Notification Plugin
+  packageVersion: 1.0
+  assetPath: Assets/Pyro Entertainment/Toast Notifications Plugin/Scripts/MonoBehaviour/NotificationToast.cs
+  uploadId: 815466

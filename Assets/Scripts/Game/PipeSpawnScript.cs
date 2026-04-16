@@ -22,10 +22,10 @@ public class PipeSpawnScript : MonoBehaviour
 
     void Update()
     {
-        float currentSpeed = SpeedManager.currentSpeed;
+        float currentSpeed = SpeedManager.currentSpeed * SpeedManager.SlowMoMultiplier;
 
         // Spawnrate anpassen, aber Mindestgrenze einhalten
-        float adjustedSpawnRate = Mathf.Clamp(baseSpawnRate * (startSpeed / currentSpeed), minSpawnRate, baseSpawnRate);
+        float adjustedSpawnRate = Mathf.Max(minSpawnRate, baseSpawnRate * (startSpeed / currentSpeed));
 
         if (timer < adjustedSpawnRate)
         {
@@ -36,6 +36,13 @@ public class PipeSpawnScript : MonoBehaviour
             spawnPipe();
             timer = 0f;
         }
+    }
+
+    // Sofortiger Spawn + Timer-Reset — wird beim Richtungswechsel aufgerufen
+    public void ForceSpawnNow()
+    {
+        spawnPipe();
+        timer = 0f;
     }
 
     void spawnPipe()
@@ -50,7 +57,10 @@ public class PipeSpawnScript : MonoBehaviour
             y = Random.Range(transform.position.y - heightOffset, transform.position.y + heightOffset);
         }
 
-        GameObject spawnedPipe = Instantiate(pipe, new Vector3(transform.position.x, y), transform.rotation);
+        float spawnX = DirectionFlipManager.IsFlipped
+            ? -Mathf.Abs(transform.position.x)
+            :  Mathf.Abs(transform.position.x);
+        GameObject spawnedPipe = Instantiate(pipe, new Vector3(spawnX, y), transform.rotation);
 
         if (BiomeManager.ActivePipeMaterial != null)
         {

@@ -69,8 +69,7 @@ public class WeeklyMissionRewardScript : MonoBehaviour
 
         // Belohnung speichern
         int stash = PlayerPrefs.GetInt("CannabisStash", 0) + cannabisReward;
-        PlayerPrefs.SetInt("CannabisStash", stash);
-        PlayerPrefs.Save();
+        CloudSaveManager.Instance.SaveInt("CannabisStash", stash);
 
         if (cannabisStashText != null)
             cannabisStashText.text = stash.ToString();
@@ -82,7 +81,7 @@ public class WeeklyMissionRewardScript : MonoBehaviour
             currentMissionId = null;
         }
 
-        StartCoroutine(AnimateRewardImage());
+        ToastManager.Show($"Mission complete! +{cannabisReward} Cannabis", ToastType.Reward);
     }
 
     IEnumerator FadeInPanel()

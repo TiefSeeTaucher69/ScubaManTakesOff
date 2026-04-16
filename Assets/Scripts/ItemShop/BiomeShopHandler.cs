@@ -20,7 +20,7 @@ public class BiomeShopHandler : MonoBehaviour
         if (!PlayerPrefs.HasKey("ActiveBiome"))
             PlayerPrefs.SetString("ActiveBiome", "Mountain");
         if (PlayerPrefs.GetInt("HasBiomeMountain", 0) == 0)
-            PlayerPrefs.SetInt("HasBiomeMountain", 1);
+            CloudSaveManager.Instance.SaveInt("HasBiomeMountain", 1);
 
         foreach (var data in biomes)
         {

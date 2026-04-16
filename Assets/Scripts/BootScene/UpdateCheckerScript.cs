@@ -12,7 +12,7 @@ public class BootUpdateManager : MonoBehaviour
 {
     [Header("Versionseinstellungen")]
     private string currentVersion;
-    public string apiUrl = "https://api.github.com/repos/TiefSeeTaucher69/FlappySteff/releases/latest";
+    public string apiUrl = "https://api.github.com/repos/TiefSeeTaucher69/ScubaManTakesOff/releases/latest";
 
     [Header("UI")]
     public GameObject updatePanel;       // Panel mit Buttons und Info
@@ -42,13 +42,33 @@ public class BootUpdateManager : MonoBehaviour
         try
         {
             await UnityServices.InitializeAsync();
+
+            bool linked = PlayerPrefs.GetInt("PlayerAccountsLinked", 0) == 1;
+
             if (!AuthenticationService.Instance.IsSignedIn)
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
-            UnityEngine.Debug.Log("Unity Services bereit. Player ID: " + AuthenticationService.Instance.PlayerId);
+            {
+                if (AuthenticationService.Instance.SessionTokenExists && linked)
+                {
+                    // Bekannter Spieler mit echtem Player Accounts Login – automatisch einloggen
+                    await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                    UnityEngine.Debug.Log("Auto-Login via Session Token. Player ID: " + AuthenticationService.Instance.PlayerId);
+
+                    // Cloud-Daten in PlayerPrefs laden
+                    if (CloudSaveManager.Instance != null)
+                        await CloudSaveManager.Instance.LoadAllAsync();
+                }
+                // Kein Flag oder kein Session Token → FirstOpen zeigt Login-Screen
+            }
+            else
+            {
+                UnityEngine.Debug.Log("Bereits eingeloggt. Player ID: " + AuthenticationService.Instance.PlayerId);
+            }
         }
         catch (System.Exception e)
         {
-            UnityEngine.Debug.LogError("Unity Services Initialisierung fehlgeschlagen: " + e.Message);
+            UnityEngine.Debug.LogWarning("Unity Services Initialisierung fehlgeschlagen (Session abgelaufen?): " + e.Message);
+            // Session abgelaufen oder Fehler → FirstOpen zeigt Login-Screen
+            try { AuthenticationService.Instance.SignOut(); } catch { }
         }
     }
 
@@ -180,7 +200,8 @@ public class BootUpdateManager : MonoBehaviour
 
     private void LoadNextScene()
     {
-        if (PlayerPrefs.HasKey("Username"))
+        bool linked = PlayerPrefs.GetInt("PlayerAccountsLinked", 0) == 1;
+        if (AuthenticationService.Instance.IsSignedIn && PlayerPrefs.HasKey("Username") && linked)
         {
             SceneManager.LoadScene("MainMenu");
         }

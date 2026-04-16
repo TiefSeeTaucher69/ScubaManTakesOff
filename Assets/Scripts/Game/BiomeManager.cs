@@ -30,6 +30,7 @@ public class BiomeManager : MonoBehaviour
     private Transform  _tileA;
     private GameObject _tileBObject;
     private Transform  _tileB;
+    private bool       _prevFlipped  = false;
 
     void Awake()
     {
@@ -94,15 +95,30 @@ public class BiomeManager : MonoBehaviour
     {
         if (!_scrolling) return;
 
-        _scrollOffset -= SpeedManager.currentSpeed * parallaxFactor * Time.deltaTime;
+        bool isFlipped = DirectionFlipManager.IsFlipped;
+        if (isFlipped != _prevFlipped)
+        {
+            _scrollOffset = 0f;
+            _prevFlipped  = isFlipped;
+        }
 
-        // Modulo-Wrap: sobald ein komplettes Tile-Bild rausgescrollt ist → zurücksetzen
-        if (_scrollOffset <= -_bgWorldWidth)
-            _scrollOffset += _bgWorldWidth;
-
-        // Beide Positionen immer aus dem gleichen Offset berechnet → niemals eine Lücke
-        _tileA.position = new Vector3(_scrollOffset,                  0f, 1f);
-        _tileB.position = new Vector3(_scrollOffset + _bgWorldWidth,  0f, 1f);
+        float bgSpeed = SpeedManager.currentSpeed * SpeedManager.SlowMoMultiplier * parallaxFactor;
+        if (!isFlipped)
+        {
+            _scrollOffset -= bgSpeed * Time.deltaTime;
+            if (_scrollOffset <= -_bgWorldWidth)
+                _scrollOffset += _bgWorldWidth;
+            _tileA.position = new Vector3(_scrollOffset,                0f, 1f);
+            _tileB.position = new Vector3(_scrollOffset + _bgWorldWidth, 0f, 1f);
+        }
+        else
+        {
+            _scrollOffset += bgSpeed * Time.deltaTime;
+            if (_scrollOffset >= _bgWorldWidth)
+                _scrollOffset -= _bgWorldWidth;
+            _tileA.position = new Vector3(_scrollOffset,                0f, 1f);
+            _tileB.position = new Vector3(_scrollOffset - _bgWorldWidth, 0f, 1f);
+        }
     }
 
     void OnDestroy()

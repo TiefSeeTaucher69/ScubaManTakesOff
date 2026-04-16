@@ -31,6 +31,8 @@ public class MenuHandlerScript : MonoBehaviour
     [SerializeField] private Sprite spriteInvincible;
     [SerializeField] private Sprite spriteShrink;
     [SerializeField] private Sprite spriteLaser;
+    [SerializeField] private Sprite spriteSlowMo;
+    [SerializeField] private Sprite spriteShield;
 
     [Header("Scoreboard-Bar")]
     [SerializeField] private Button btnScoreQuickplay;
@@ -73,8 +75,6 @@ public class MenuHandlerScript : MonoBehaviour
         if (UnityServices.State != ServicesInitializationState.Initialized)
         {
             await UnityServices.InitializeAsync();
-            if (!AuthenticationService.Instance.IsSignedIn)
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
 
         int highscore = PlayerPrefs.GetInt("Highscore", 0);
@@ -237,6 +237,8 @@ public class MenuHandlerScript : MonoBehaviour
                 "Invincible" => spriteInvincible,
                 "Shrink"     => spriteShrink,
                 "Laser"      => spriteLaser,
+                "SlowMo"     => spriteSlowMo,
+                "Shield"     => spriteShield,
                 _            => null
             };
         }

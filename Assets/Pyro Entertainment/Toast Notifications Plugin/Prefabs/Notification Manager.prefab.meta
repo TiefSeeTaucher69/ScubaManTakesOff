@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4dab0e5cbc43a854f87335ef376d73d4
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 322810
+  packageName: Pyro - Toast Notification Plugin
+  packageVersion: 1.0
+  assetPath: Assets/Pyro Entertainment/Toast Notifications Plugin/Prefabs/Notification
+    Manager.prefab
+  uploadId: 815466

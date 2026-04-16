@@ -6,6 +6,7 @@ public class SpeedManager : MonoBehaviour
     public static float currentSpeed { get; private set; } = startSpeed;
     public static float acceleration = 0.1f;
     public static float maxSpeed = 15f;
+    public static float SlowMoMultiplier = 1f;
 
     void Awake()
     {
@@ -25,6 +26,7 @@ public class SpeedManager : MonoBehaviour
     public static void ResetSpeed()
     {
         currentSpeed = startSpeed;
+        SlowMoMultiplier = 1f;
     }
 
 }
