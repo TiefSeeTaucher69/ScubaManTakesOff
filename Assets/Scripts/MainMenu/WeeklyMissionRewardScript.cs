@@ -18,6 +18,9 @@ public class WeeklyMissionRewardScript : MonoBehaviour
 
     void Awake()
     {
+        if (RemoteConfigManager.Instance != null)
+            cannabisReward = RemoteConfigManager.Instance.MissionRewardCannabis;
+
         panel.SetActive(false);
         collectButton.onClick.AddListener(OnCollectClicked);
         rewardImage.sprite = rewardSprite;

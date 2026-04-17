@@ -50,7 +50,7 @@ public class ShopCardScript : MonoBehaviour
             itemNameText.text = itemData.itemName;
 
         if (costText != null)
-            costText.text = itemData.alwaysOwned ? "Gratis" : itemData.cost.ToString();
+            costText.text = itemData.alwaysOwned ? "Free" : itemData.cost.ToString();
 
         buyButton.onClick.AddListener(OnBuyClicked);
         activateButton.onClick.AddListener(OnActivateClicked);
@@ -61,20 +61,43 @@ public class ShopCardScript : MonoBehaviour
     void OnBuyClicked()
     {
         if (data.alwaysOwned) return;
+
+        // Stackable items: can be bought repeatedly, each purchase adds 1 run-use
+        if (data.isStackable)
+        {
+            int stash = PlayerPrefs.GetInt("CannabisStash", 0);
+            if (stash < data.cost)
+            {
+                ToastManager.Show("Not enough Cannabis!", ToastType.Warning);
+                return;
+            }
+            int newStash = stash - data.cost;
+            int newCount = PlayerPrefs.GetInt(data.countKey, 0) + 1;
+            CloudSaveManager.Instance.SaveBatch(new Dictionary<string, object>
+            {
+                { data.countKey,   newCount },
+                { "CannabisStash", newStash }
+            });
+            ToastManager.Show($"{data.itemName} purchased! (×{newCount})", ToastType.Success);
+            onChanged?.Invoke();
+            return;
+        }
+
+        // Non-stackable: original one-time purchase logic
         if (PlayerPrefs.GetInt(data.ownedKey, 0) == 1) return;
 
-        int stash = PlayerPrefs.GetInt("CannabisStash", 0);
-        if (stash < data.cost)
+        int currentStash = PlayerPrefs.GetInt("CannabisStash", 0);
+        if (currentStash < data.cost)
         {
             ToastManager.Show("Not enough Cannabis!", ToastType.Warning);
             return;
         }
 
-        int newStash = stash - data.cost;
+        int updatedStash = currentStash - data.cost;
         CloudSaveManager.Instance.SaveBatch(new Dictionary<string, object>
         {
-            { data.ownedKey,    1        },
-            { "CannabisStash",  newStash }
+            { data.ownedKey,    1            },
+            { "CannabisStash",  updatedStash }
         });
         ToastManager.Show($"{data.itemName} purchased!", ToastType.Success);
         onChanged?.Invoke();
@@ -82,6 +105,9 @@ public class ShopCardScript : MonoBehaviour
 
     void OnActivateClicked()
     {
+        // Items are equipped via the Loadout tab, not the Shop
+        if (data.isStackable) return;
+
         bool owned = data.alwaysOwned || PlayerPrefs.GetInt(data.ownedKey, 0) == 1;
         if (!owned) return;
 
@@ -94,31 +120,48 @@ public class ShopCardScript : MonoBehaviour
 
     public void UpdateState()
     {
-        bool owned  = data.alwaysOwned || PlayerPrefs.GetInt(data.ownedKey, 0) == 1;
-        bool active = PlayerPrefs.GetString(data.activePrefsKey) == data.activeValue;
-        int  stash  = PlayerPrefs.GetInt("CannabisStash", 0);
-
-        // Buy-Button: nur sichtbar wenn nicht besessen
-        buyButton.gameObject.SetActive(!owned);
-        if (!owned)
+        // Stackable items: always show buy button, show stack count, hide activate button
+        if (data.isStackable)
         {
+            int count = PlayerPrefs.GetInt(data.countKey, 0);
+            int stash = PlayerPrefs.GetInt("CannabisStash", 0);
+
+            buyButton.gameObject.SetActive(true);
             bool canAfford = stash >= data.cost;
             var buyText = buyButton.GetComponentInChildren<TMP_Text>();
             if (buyText != null)
                 buyText.color = canAfford ? Color.black : new Color(0.85f, 0.15f, 0.15f);
+            buyButton.image.color = canAfford ? Color.white : new Color(1f, 0.85f, 0.85f);
 
-            // Button-Hintergrund direkt setzen
+            activateButton.gameObject.SetActive(false);
+
+            if (costText != null)
+                costText.text = count > 0 ? $"×{count}" : data.cost.ToString();
+            return;
+        }
+
+        // Non-stackable: buy until owned, then show "Bought" (equipping happens in Loadout)
+        bool owned        = data.alwaysOwned || PlayerPrefs.GetInt(data.ownedKey, 0) == 1;
+        int  currentStash = PlayerPrefs.GetInt("CannabisStash", 0);
+
+        buyButton.gameObject.SetActive(!owned);
+        if (!owned)
+        {
+            bool canAfford = currentStash >= data.cost;
+            var buyText = buyButton.GetComponentInChildren<TMP_Text>();
+            if (buyText != null)
+                buyText.color = canAfford ? Color.black : new Color(0.85f, 0.15f, 0.15f);
             buyButton.image.color = canAfford ? Color.white : new Color(1f, 0.85f, 0.85f);
         }
 
-        // Activate-Button: nur sichtbar wenn besessen
         activateButton.gameObject.SetActive(owned);
+        activateButton.interactable = false;
         var activateText = activateButton.GetComponentInChildren<TMP_Text>();
         if (activateText != null)
-            activateText.text = active ? "Aktiv" : "Aktivieren";
-
-        // Farbe direkt auf Image setzen — ColorBlock aktualisiert sich sonst nur bei State-Transitions
-        Color activateBtnColor = active ? new Color(0.13f, 0.77f, 0.37f) : new Color(0.80f, 0.80f, 0.80f);
-        activateButton.image.color = activateBtnColor;
+        {
+            activateText.text  = "Bought";
+            activateText.color = Color.green;
+        }
+        activateButton.image.color = new Color(0.45f, 0.45f, 0.45f);
     }
 }

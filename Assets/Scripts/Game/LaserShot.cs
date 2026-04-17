@@ -8,7 +8,12 @@ public class LaserShot : MonoBehaviour
 
     void Start()
     {
-        Destroy(gameObject, lifetime); // Nach X Sekunden zerst�ren
+        if (RemoteConfigManager.Instance != null)
+        {
+            speed    = RemoteConfigManager.Instance.LaserSpeed;
+            lifetime = RemoteConfigManager.Instance.LaserLifetime;
+        }
+        Destroy(gameObject, lifetime);
     }
 
     void Update()

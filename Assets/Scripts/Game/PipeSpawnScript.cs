@@ -4,9 +4,9 @@ public class PipeSpawnScript : MonoBehaviour
 {
     public GameObject pipe;
 
-    public float baseSpawnRate = 3f;       // urspr�ngliche Spawnrate bei Startgeschwindigkeit
-    public float minSpawnRate = 0.5f;      // minimale Spawnrate, damit's nicht unspielbar wird
-    public float startSpeed = 5f;          // Startgeschwindigkeit, muss mit SpeedManager �bereinstimmen
+    public float baseSpawnRate = 3f;
+    public float minSpawnRate = 0.5f;
+    public float startSpeed = 5f;
     public float heightOffset = 10f;
 
     private float timer = 0f;
@@ -14,6 +14,14 @@ public class PipeSpawnScript : MonoBehaviour
 
     void Start()
     {
+        if (RemoteConfigManager.Instance != null)
+        {
+            baseSpawnRate = RemoteConfigManager.Instance.PipeSpawnRateBase;
+            minSpawnRate  = RemoteConfigManager.Instance.PipeSpawnRateMin;
+            startSpeed    = RemoteConfigManager.Instance.PipeSpeedStart;
+            heightOffset  = RemoteConfigManager.Instance.PipeSpawnHeightRange;
+        }
+
         if (RankedManager.IsRanked)
             rankedRng = RankedManager.CreateFreshPipeRng();
 
@@ -24,7 +32,6 @@ public class PipeSpawnScript : MonoBehaviour
     {
         float currentSpeed = SpeedManager.currentSpeed * SpeedManager.SlowMoMultiplier;
 
-        // Spawnrate anpassen, aber Mindestgrenze einhalten
         float adjustedSpawnRate = Mathf.Max(minSpawnRate, baseSpawnRate * (startSpeed / currentSpeed));
 
         if (timer < adjustedSpawnRate)

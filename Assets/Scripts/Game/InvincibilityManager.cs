@@ -1,12 +1,12 @@
 using UnityEngine;
-using UnityEngine.UI; // F�r TextMeshPro: using TMPro;
+using UnityEngine.UI;
 using System.Collections;
 
 public class InvincibilityManager : MonoBehaviour
 {
     public Collider2D playerCollider;
     public SpriteRenderer spriteRenderer;
-    public TMPro.TMP_Text cooldownText; // Oder TMP_Text f�r TextMeshPro
+    public TMPro.TMP_Text cooldownText;
 
     public float invincibilityDuration = 2f;
     public float cooldownTime = 10f;
@@ -21,9 +21,29 @@ public class InvincibilityManager : MonoBehaviour
     {
         steff = FindObjectOfType<SteffScript>();
 
+        if (RemoteConfigManager.Instance != null)
+        {
+            invincibilityDuration = RemoteConfigManager.Instance.InvincibilityDuration;
+            cooldownTime          = RemoteConfigManager.Instance.InvincibilityCooldown;
+        }
+
+        // Migration: players who owned the old 0/1 flag get 1 free stack
+        if (PlayerPrefs.GetInt("HasInvincibleItem", 0) == 1 && PlayerPrefs.GetInt("ItemCount_Invincible", 0) == 0)
+            PlayerPrefs.SetInt("ItemCount_Invincible", 1);
+
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "Invincible";
-        bool isEquipped   = !RankedManager.IsRanked && PlayerPrefs.GetInt("HasInvincibleItem", 0) == 1 && PlayerPrefs.GetString("ActiveItem", "") == "Invincible";
+        bool isEquipped   = !RankedManager.IsRanked
+                            && PlayerPrefs.GetInt("ItemCount_Invincible", 0) > 0
+                            && PlayerPrefs.GetString("ActiveItem", "") == "Invincible";
+
         invincibilityUI.SetActive(isEquipped || isRankedItem);
+
+        // Consume 1 stack at run start (Ranked never consumes)
+        if (isEquipped)
+        {
+            int count = PlayerPrefs.GetInt("ItemCount_Invincible", 0);
+            CloudSaveManager.Instance.SaveInt("ItemCount_Invincible", Mathf.Max(0, count - 1));
+        }
     }
 
     void Update()
@@ -31,18 +51,20 @@ public class InvincibilityManager : MonoBehaviour
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "Invincible";
         bool isActiveItem = !RankedManager.IsRanked && PlayerPrefs.GetString("ActiveItem", "") == "Invincible";
         if (!isRankedItem && !isActiveItem) return;
+
+        // UI was activated in Start() only if item was available; skip processing if UI is off
+        if (!invincibilityUI.activeSelf) return;
+
         HandleCooldownUI();
 
         if (steff != null && !steff.steffIsAlive) return;
         if (steff != null && steff.IsPaused()) return;
 
-        if ((Input.GetKeyDown(KeyCode.E) && !isInvincible && !isOnCooldown) || (Input.GetKeyDown(KeyCode.Mouse0) && !isInvincible && !isOnCooldown) || (Input.GetKeyDown(KeyCode.JoystickButton3) && !isInvincible && !isOnCooldown))
+        if ((Input.GetKeyDown(KeyCode.E)              && !isInvincible && !isOnCooldown) ||
+            (Input.GetKeyDown(KeyCode.Mouse0)          && !isInvincible && !isOnCooldown) ||
+            (Input.GetKeyDown(KeyCode.JoystickButton3) && !isInvincible && !isOnCooldown))
         {
-            bool hasItem = PlayerPrefs.GetInt("HasInvincibleItem", 0) == 1 || isRankedItem;
-            if (hasItem)
-            {
-                StartCoroutine(InvincibilityCoroutine());
-            }
+            StartCoroutine(InvincibilityCoroutine());
         }
 
         if (isOnCooldown)
@@ -59,17 +81,11 @@ public class InvincibilityManager : MonoBehaviour
     void HandleCooldownUI()
     {
         if (isInvincible)
-        {
-            cooldownText.text = "Unverwundbar!";
-        }
+            cooldownText.text = "Invincible!";
         else if (isOnCooldown)
-        {
-            cooldownText.text = $"Bereit in: {cooldownTimer:F1}s";
-        }
+            cooldownText.text = $"Ready in: {cooldownTimer:F1}s";
         else
-        {
-            cooldownText.text = "Bereit!";
-        }
+            cooldownText.text = "Ready!";
     }
 
     private IEnumerator InvincibilityCoroutine()
@@ -82,7 +98,6 @@ public class InvincibilityManager : MonoBehaviour
 
         while (elapsed < invincibilityDuration)
         {
-            // Blinken durch Alpha
             Color color = spriteRenderer.color;
             color.a = (color.a == 1f) ? 0.3f : 1f;
             spriteRenderer.color = color;
@@ -93,7 +108,6 @@ public class InvincibilityManager : MonoBehaviour
             blinkInterval = Mathf.Max(0.05f, blinkInterval * 0.8f);
         }
 
-        // Zur�cksetzen
         Color resetColor = spriteRenderer.color;
         resetColor.a = 1f;
         spriteRenderer.color = resetColor;
@@ -101,7 +115,6 @@ public class InvincibilityManager : MonoBehaviour
         playerCollider.enabled = true;
         isInvincible = false;
 
-        // Jetzt startet der Cooldown!
         isOnCooldown = true;
         cooldownTimer = cooldownTime;
     }

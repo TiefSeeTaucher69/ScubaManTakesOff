@@ -131,9 +131,14 @@ public class LogicScript : MonoBehaviour
         float runTime = steff.runTime;
         bool survived30Seconds = runTime >= 30f;
 
+        int oldTotalXP = PlayerPrefs.GetInt("TotalXP", 0);
+        if (XPManager.ShouldMigrate(oldTotalXP, PlayerPrefs.GetInt("TotalScore", 0)))
+            oldTotalXP = XPManager.MigrationGrant(PlayerPrefs.GetInt("TotalScore", 0));
+        int xpGained = XPManager.CalculateRunXP(score, collectedLeaves, runTime);
+
         var summary = gameOverScreen.GetComponent<RunSummaryScript>();
         if (summary != null)
-            summary.ZeigeSummary(score, collectedLeaves, runTime, istNeuerRekord);
+            summary.ZeigeSummary(score, collectedLeaves, runTime, istNeuerRekord, xpGained, oldTotalXP);
 
         OnRunEnd(score, collectedLeaves, runTime, survived30Seconds);
 
@@ -177,21 +182,27 @@ public class LogicScript : MonoBehaviour
     {
         Debug.Log($"OnRunEnd called: Score={score}, Leaves={collectedLeaves}, Time={runTime}, Survived30s={survived30Seconds}");
 
+        int newTotalScore = PlayerPrefs.GetInt("TotalScore", 0) + score;
+        int newTotalRuns  = PlayerPrefs.GetInt("TotalRuns",  0) + 1;
+
+        int oldXP = PlayerPrefs.GetInt("TotalXP", 0);
+        if (XPManager.ShouldMigrate(oldXP, PlayerPrefs.GetInt("TotalScore", 0)))
+            oldXP = XPManager.MigrationGrant(PlayerPrefs.GetInt("TotalScore", 0));
+        int newTotalXP = Mathf.Min(oldXP + XPManager.CalculateRunXP(score, collectedLeaves, runTime), XPManager.XPCap);
+
+        CloudSaveManager.Instance.SaveBatch(new Dictionary<string, object>
+        {
+            { "TotalScore",  newTotalScore },
+            { "TotalRuns",   newTotalRuns  },
+            { "TotalXP",     newTotalXP    },
+            { "PlayerLevel", XPManager.GetLevel(newTotalXP) }
+        });
+
         if (WeeklyMissionManager.Instance != null)
         {
             Debug.Log("Updating missions from OnRunEnd");
 
-            // ⏫ NEU: Gesamtscore berechnen
-            int newTotalScore = PlayerPrefs.GetInt("TotalScore", 0) + score;
-            int newTotalRuns = PlayerPrefs.GetInt("TotalRuns", 0) + 1;
-            CloudSaveManager.Instance.SaveBatch(new Dictionary<string, object>
-            {
-                { "TotalScore", newTotalScore },
-                { "TotalRuns",  newTotalRuns }
-            });
-
             WeeklyMissionManager.Instance.UpdateMission(MissionType.TotalScore, score);
-
             WeeklyMissionManager.Instance.UpdateMission(MissionType.TimeInOneRun, (int)runTime);
             WeeklyMissionManager.Instance.UpdateMission(MissionType.TotalTime, (int)runTime);
             WeeklyMissionManager.Instance.UpdateMission(MissionType.TotalRuns, 1);

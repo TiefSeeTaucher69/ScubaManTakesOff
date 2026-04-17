@@ -243,14 +243,12 @@ public class WeeklyMissionManager : MonoBehaviour
 
                     if (!RewardAlreadyCollected(m.id))
                     {
+                        ToastManager.Show($"Mission complete: {m.description}", ToastType.Success);
+
                         if (weeklyMissionRewardScript != null)
                         {
                             Debug.Log($"ShowReward wird aufgerufen für Mission: {m.description}");
                             weeklyMissionRewardScript.ShowReward(m.description, m.id);
-                        }
-                        else
-                        {
-                            Debug.LogError("weeklyMissionRewardScript ist NULL beim Versuch ShowReward aufzurufen!");
                         }
                     }
                 }

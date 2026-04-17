@@ -34,6 +34,15 @@ public class DirectionFlipManager : MonoBehaviour
 
     void Start()
     {
+        if (RemoteConfigManager.Instance != null)
+        {
+            firstEventMin = RemoteConfigManager.Instance.FlipFirstTriggerMin;
+            firstEventMax = RemoteConfigManager.Instance.FlipFirstTriggerMax;
+            cooldownMin   = RemoteConfigManager.Instance.FlipCooldownMin;
+            cooldownMax   = RemoteConfigManager.Instance.FlipCooldownMax;
+            flipDuration  = RemoteConfigManager.Instance.FlipDuration;
+        }
+
         _timer = Random.Range(firstEventMin, firstEventMax);
         if (indicatorPanel != null) indicatorPanel.SetActive(false);
 

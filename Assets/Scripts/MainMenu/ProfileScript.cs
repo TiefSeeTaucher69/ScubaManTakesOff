@@ -23,6 +23,11 @@ public class ProfileScript : MonoBehaviour
     [SerializeField] private TMP_Text txtTotalRuns;
     [SerializeField] private TMP_Text txtAvgScore;
 
+    [Header("XP / Level")]
+    [SerializeField] private TMP_Text Txt_ProfileLevel;
+    [SerializeField] private Image    Img_ProfileXPBar;
+    [SerializeField] private TMP_Text Txt_ProfileXPProgress;
+
     void OnEnable()
     {
         RefreshProfile();
@@ -48,6 +53,22 @@ public class ProfileScript : MonoBehaviour
         txtTotalScore.text = total.ToString("N0");
         txtTotalRuns.text = runs.ToString();
         txtAvgScore.text = runs > 0 ? (total / runs).ToString() : "\u2014";
+
+        int totalXP = PlayerPrefs.GetInt("TotalXP", 0);
+        int level   = XPManager.GetLevel(totalXP);
+
+        if (Txt_ProfileLevel != null)
+            Txt_ProfileLevel.text = $"Lv. {level}";
+
+        if (Img_ProfileXPBar != null)
+            Img_ProfileXPBar.fillAmount = level >= XPManager.MaxLevel ? 1f
+                : (XPManager.GetXPRequired(totalXP) > 0
+                    ? Mathf.Clamp01((float)XPManager.GetXPInLevel(totalXP) / XPManager.GetXPRequired(totalXP))
+                    : 0f);
+
+        if (Txt_ProfileXPProgress != null)
+            Txt_ProfileXPProgress.text = level >= XPManager.MaxLevel ? "MAX LEVEL"
+                : $"{XPManager.GetXPInLevel(totalXP):N0} / {XPManager.GetXPRequired(totalXP):N0} XP";
     }
 
     public void OnRenameClick()

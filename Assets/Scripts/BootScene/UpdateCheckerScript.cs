@@ -56,12 +56,18 @@ public class BootUpdateManager : MonoBehaviour
                     // Cloud-Daten in PlayerPrefs laden
                     if (CloudSaveManager.Instance != null)
                         await CloudSaveManager.Instance.LoadAllAsync();
+
+                    if (RemoteConfigManager.Instance != null)
+                        await RemoteConfigManager.Instance.FetchAsync();
                 }
                 // Kein Flag oder kein Session Token → FirstOpen zeigt Login-Screen
             }
             else
             {
                 UnityEngine.Debug.Log("Bereits eingeloggt. Player ID: " + AuthenticationService.Instance.PlayerId);
+
+                if (RemoteConfigManager.Instance != null)
+                    await RemoteConfigManager.Instance.FetchAsync();
             }
         }
         catch (System.Exception e)

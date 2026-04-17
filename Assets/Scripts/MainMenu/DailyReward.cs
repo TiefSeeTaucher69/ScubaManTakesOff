@@ -25,6 +25,9 @@ public class DailyReward : MonoBehaviour
 
     void Start()
     {
+        if (RemoteConfigManager.Instance != null)
+            cannabisRewardToAdd = RemoteConfigManager.Instance.DailyRewardCannabis;
+
         Debug.Log("🔄 Starte DailyReward...");
         rewardButton.interactable = false;
         rewardButton.onClick.AddListener(OnRewardButtonClicked);

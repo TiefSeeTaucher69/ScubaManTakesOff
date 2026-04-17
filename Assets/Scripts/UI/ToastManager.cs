@@ -30,8 +30,7 @@ public class ToastManager : MonoBehaviour
     const float TOP_PADDING   = 10f;
     const float LEFT_PADDING  = 10f;
 
-    int   _activeCount;
-    float _nextSlotY;
+    readonly List<ToastController> _activeToasts = new List<ToastController>();
     Queue<(string, ToastType, float)> _queue = new Queue<(string, ToastType, float)>();
 
     void Awake()
@@ -40,7 +39,6 @@ public class ToastManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
         BuildCanvas();
-        _nextSlotY = -TOP_PADDING;
     }
 
     void BuildCanvas()
@@ -76,7 +74,7 @@ public class ToastManager : MonoBehaviour
     {
         float d = duration <= 0f ? _defaultDuration : duration;
 
-        if (_activeCount >= _maxVisible)
+        if (_activeToasts.Count >= _maxVisible)
         {
             _queue.Enqueue((message, type, d));
             return;
@@ -92,24 +90,30 @@ public class ToastManager : MonoBehaviour
             return;
         }
 
-        _activeCount++;
-        float slotY = _nextSlotY;
-        _nextSlotY -= SLOT_HEIGHT;
+        float slotY = -TOP_PADDING - _activeToasts.Count * SLOT_HEIGHT;
 
         GameObject go = Instantiate(_toastPrefab, transform);
 
         if (go.TryGetComponent<ToastController>(out var ctrl))
+        {
+            _activeToasts.Add(ctrl);
             ctrl.Init(message, GetSprite(type), GetColor(type), duration,
                       slotY, LEFT_PADDING, OnToastComplete);
+        }
     }
 
-    void OnToastComplete()
+    void OnToastComplete(ToastController ctrl)
     {
-        _activeCount--;
-        if (_activeCount == 0)
-            _nextSlotY = -TOP_PADDING; // Slots zurücksetzen wenn alle weg
+        _activeToasts.Remove(ctrl);
 
-        if (_queue.Count > 0)
+        // Alle verbleibenden Toasts nach oben schieben
+        for (int i = 0; i < _activeToasts.Count; i++)
+        {
+            float targetY = -TOP_PADDING - i * SLOT_HEIGHT;
+            _activeToasts[i].MoveToSlot(targetY);
+        }
+
+        if (_queue.Count > 0 && _activeToasts.Count < _maxVisible)
         {
             var (msg, type, dur) = _queue.Dequeue();
             SpawnToast(msg, type, dur);

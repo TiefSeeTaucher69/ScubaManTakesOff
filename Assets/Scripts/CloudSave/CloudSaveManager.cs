@@ -33,9 +33,13 @@ public class CloudSaveManager : MonoBehaviour
         "Highscore", "RankedHighscore", "TotalScore", "TotalRuns",
         "HasInvincibleItem", "HasLaserItem", "HasShrinkItem",
         "HasSlowMoItem", "HasShieldItem",
+        "ItemCount_Invincible", "ItemCount_Shrink", "ItemCount_Laser",
+        "ItemCount_SlowMo", "ItemCount_Shield",
         "HasTrailRed", "HasTrailPurple", "HasTrailBlue",
         "HasSkin_ginger-bird", "HasSkin_tom-bird", "HasSkin_bennet-bird", "HasSkin_jan-bird",
-        "HasPetBlackCat"
+        "HasSkin_paulaner-bird",
+        "HasPetBlackCat",
+        "TotalXP", "PlayerLevel"
     };
 
     private void Awake()
@@ -124,5 +128,6 @@ public class CloudSaveManager : MonoBehaviour
     private bool IsIntKey(string key) =>
         IntKeys.Contains(key)
         || key.StartsWith("MissionRewardCollected_")
-        || key.StartsWith("HasBiome");
+        || key.StartsWith("HasBiome")
+        || key.StartsWith("HasPet");
 }

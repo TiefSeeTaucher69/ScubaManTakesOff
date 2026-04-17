@@ -47,7 +47,8 @@
       "mcp__ai-game-developer__console-get-logs",
       "WebSearch",
       "Bash(unity-mcp-cli run-system-tool:*)",
-      "Bash(unity-mcp-cli run-tool:*)"
+      "Bash(unity-mcp-cli run-tool:*)",
+      "mcp__ai-game-developer__scene-save"
     ]
   }
 }

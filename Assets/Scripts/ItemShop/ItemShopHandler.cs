@@ -17,6 +17,8 @@ public class ItemShopHandler : MonoBehaviour
         public string  ownedKey;      // PlayerPrefs-Key "HasXxx"
         public string  activeValue;   // Wert der in activePrefsKey gespeichert wird
         public string  activePrefsKey;// "ActiveItem" / "ActiveTrail" / "ActiveSkin"
+        public bool    isStackable;   // true für Items (kaufbar als Vorrat)
+        public string  countKey;      // "ItemCount_Invincible" etc. (nur für stackable)
     }
 
     // ── Item-Listen (im Inspector befüllen) ────────────────────────────────

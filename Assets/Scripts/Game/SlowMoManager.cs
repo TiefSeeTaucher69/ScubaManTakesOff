@@ -18,10 +18,30 @@ public class SlowMoManager : MonoBehaviour
     {
         steff = FindObjectOfType<SteffScript>();
 
+        if (RemoteConfigManager.Instance != null)
+        {
+            slowMoDuration   = RemoteConfigManager.Instance.SlowMoDuration;
+            cooldownTime     = RemoteConfigManager.Instance.SlowMoCooldown;
+            slowMoMultiplier = RemoteConfigManager.Instance.SlowMoSpeedMultiplier;
+        }
+
+        // Migration: players who owned the old 0/1 flag get 1 free stack
+        if (PlayerPrefs.GetInt("HasSlowMoItem", 0) == 1 && PlayerPrefs.GetInt("ItemCount_SlowMo", 0) == 0)
+            PlayerPrefs.SetInt("ItemCount_SlowMo", 1);
+
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "SlowMo";
-        bool isEquipped   = !RankedManager.IsRanked && PlayerPrefs.GetInt("HasSlowMoItem", 0) == 1
+        bool isEquipped   = !RankedManager.IsRanked
+                            && PlayerPrefs.GetInt("ItemCount_SlowMo", 0) > 0
                             && PlayerPrefs.GetString("ActiveItem", "") == "SlowMo";
+
         slowMoUI.SetActive(isEquipped || isRankedItem);
+
+        // Consume 1 stack at run start (Ranked never consumes)
+        if (isEquipped)
+        {
+            int count = PlayerPrefs.GetInt("ItemCount_SlowMo", 0);
+            CloudSaveManager.Instance.SaveInt("ItemCount_SlowMo", Mathf.Max(0, count - 1));
+        }
     }
 
     void Update()
@@ -29,6 +49,9 @@ public class SlowMoManager : MonoBehaviour
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "SlowMo";
         bool isActiveItem = !RankedManager.IsRanked && PlayerPrefs.GetString("ActiveItem", "") == "SlowMo";
         if (!isRankedItem && !isActiveItem) return;
+
+        if (!slowMoUI.activeSelf) return;
+
         HandleCooldownUI();
 
         if (steff != null && !steff.steffIsAlive) return;
@@ -38,11 +61,7 @@ public class SlowMoManager : MonoBehaviour
             (Input.GetKeyDown(KeyCode.Mouse0)          && !isSlowMoActive && !isOnCooldown) ||
             (Input.GetKeyDown(KeyCode.JoystickButton3) && !isSlowMoActive && !isOnCooldown))
         {
-            bool hasItem = PlayerPrefs.GetInt("HasSlowMoItem", 0) == 1 || isRankedItem;
-            if (hasItem)
-            {
-                StartCoroutine(ActivateSlowMo());
-            }
+            StartCoroutine(ActivateSlowMo());
         }
 
         if (isOnCooldown)

@@ -133,6 +133,9 @@ public class AuthScript : MonoBehaviour
         if (CloudSaveManager.Instance != null)
             await CloudSaveManager.Instance.LoadAllAsync();
 
+        if (RemoteConfigManager.Instance != null)
+            await RemoteConfigManager.Instance.FetchAsync();
+
         if (!PlayerPrefs.HasKey("Username"))
         {
             authPanel.SetActive(false);

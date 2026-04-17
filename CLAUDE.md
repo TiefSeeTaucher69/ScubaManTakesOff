@@ -27,15 +27,26 @@ Sprites in `Assets/Resources/Skins/`. Loaded via `Resources.Load<Sprite>("Skins/
 Active skin: PlayerPrefs `ActiveSkin` (Default: `"benjo-bird"`)
 
 ## Items / Power-ups
-| Name | PlayerPrefs-Key | Cost |
-|------|----------------|------|
-| Invincible | `HasInvincibleItem` | 50 Cannabis |
-| Shrink | `HasShrinkItem` | 50 Cannabis |
-| Laser | `HasLaserItem` | 50 Cannabis |
 
-Active item: PlayerPrefs `ActiveItem` ("Invincible" / "Shrink" / "Laser" / "")
+Items are **consumable stacks** — buying the same item multiple times adds run-uses. Each run consumes 1 stack at `Start()`. Equipping is done in the Loadout tab, not the Shop.
 
-**Ranked rule:** In Ranked mode (`RankedManager.IsRanked == true`) `ActiveItem` from PlayerPrefs is ignored. Only `RankedManager.WeeklyItem` is active — even without purchase. All three managers (InvincibilityManager, ShrinkManager, LaserManager) check: `bool isActiveItem = !RankedManager.IsRanked && PlayerPrefs.GetString("ActiveItem") == "..."`.
+| Name | Stack Key | Legacy Key | Cost |
+|------|-----------|-----------|------|
+| Invincible | `ItemCount_Invincible` | `HasInvincibleItem` | 50 Cannabis |
+| Shrink | `ItemCount_Shrink` | `HasShrinkItem` | 50 Cannabis |
+| Laser | `ItemCount_Laser` | `HasLaserItem` | 50 Cannabis |
+| SlowMo | `ItemCount_SlowMo` | `HasSlowMoItem` | 50 Cannabis |
+| Shield | `ItemCount_Shield` | `HasShieldItem` | 50 Cannabis |
+
+Active item: PlayerPrefs `ActiveItem` ("Invincible" / "Shrink" / "Laser" / "SlowMo" / "Shield" / "")
+
+**Stack consume timing:** At GameScene `Start()` in each item manager. Ranked = no consume.
+
+**Migration:** If `HasXItem == 1` and `ItemCount_X == 0` → give 1 free stack (runs once in `Start()`).
+
+**Shop behavior:** Items show a buy button that increments the stack count. The activate button is hidden for items — activation happens in the Loadout tab.
+
+**Ranked rule:** In Ranked mode (`RankedManager.IsRanked == true`) `ActiveItem` from PlayerPrefs is ignored. Only `RankedManager.WeeklyItem` is active — even without owning any stacks. All managers (InvincibilityManager, ShrinkManager, LaserManager, SlowMoManager, ShieldManager) check: `bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "X"` and never consume stacks in Ranked.
 
 ## Trails
 | Name | PlayerPrefs-Key | Cost |
@@ -107,6 +118,11 @@ Active pet: PlayerPrefs `ActivePet` (e.g. `"BlackCat"` / `""`)
 | `HasPet[Name]` | int | 0/1 whether pet is purchased |
 | `ActiveBiome` | string | Active biome (default `"Mountain"`) |
 | `PlayerAccountsLinked` | int | 0/1 — 1 = player has logged in via Unity Player Accounts |
+| `ItemCount_Invincible` | int | Remaining run-uses of Invincible |
+| `ItemCount_Shrink` | int | Remaining run-uses of Shrink |
+| `ItemCount_Laser` | int | Remaining run-uses of Laser |
+| `ItemCount_SlowMo` | int | Remaining run-uses of SlowMo |
+| `ItemCount_Shield` | int | Remaining run-uses of Shield |
 
 ## Backend: Unity Gaming Services
 
@@ -128,7 +144,7 @@ Active pet: PlayerPrefs `ActivePet` (e.g. `"BlackCat"` / `""`)
 DontDestroyOnLoad singleton. Write pattern: write to PlayerPrefs immediately, then async push to cloud (fire-and-forget).
 On login: `LoadAllAsync()` loads all cloud keys into PlayerPrefs — **cloud wins over local**.
 
-**Keys synced to cloud:** `CannabisStash`, `Highscore`, `RankedHighscore`, `TotalScore`, `TotalRuns`, all item/trail/skin/pet ownership keys, `Username`
+**Keys synced to cloud:** `CannabisStash`, `Highscore`, `RankedHighscore`, `TotalScore`, `TotalRuns`, all item/trail/skin/pet ownership keys, all `ItemCount_*` stack keys, `Username`
 **NOT synced:** `VSyncEnabled`, `FPSCap`, `ResolutionIndex`, active selections (`ActiveSkin`, `ActiveTrail`, `ActiveItem`, `ActivePet`, `ActiveBiome`)
 
 Use `CloudSaveManager.Instance.SaveInt(key, value)` / `.SaveString(key, value)` / `.SaveBatch(dict)` instead of raw `PlayerPrefs.Set*` for synced keys.
@@ -160,7 +176,7 @@ All players get the same 3 missions per week. Fully offline/local.
 ## MainMenu UI Architecture
 
 ### Tab Navigation (TabController.cs)
-`Canvas` has 5 main panels: `Pnl_Play`, `Pnl_Scoreboard`, `Pnl_Missions`, `Pnl_Shop`, `Pnl_Settings`.
+`Canvas` has 7 main panels: `Pnl_Play`, `Pnl_Scoreboard`, `Pnl_Missions`, `Pnl_Shop`, `Pnl_Loadout`, `Pnl_Profile`, `Pnl_Settings`.
 `TabController.cs` switches between them. Each panel has a `CanvasGroup` for fade-in (alpha 0→1, 0.2s).
 TabBar has an `Img_Slider` (green, `LayoutElement.ignoreLayout=true`) that is animated via Coroutine.
 
@@ -179,6 +195,31 @@ Slider position determined via `indicator.GetComponentInParent<Button>().localPo
 ### Shop Cards (ShopCardScript.cs)
 Each generated shop card plays a pop-in animation on appearance (Scale 0.8→1.0, 0.15s).
 Buy/Activate use `CloudSaveManager.Instance.SaveBatch/SaveString` — not raw PlayerPrefs.
+**Stackable items** (all 5 power-ups): buy button always visible, increments `ItemCount_X`, cost text shows current stack count. Activate button hidden — equipping happens in Loadout.
+
+### Loadout (Pnl_Loadout — `LoadoutScript.cs`)
+Dedicated tab for equipping Skin, Item, Trail, Pet, Biome before each run.
+
+**Layout:** Character preview (static skin sprite, left), 5 equipment slots in a grid (right), horizontal inventory scroll at the bottom (shows owned items for the selected slot's category).
+
+**Interaction:** Click a slot to select its category → inventory filters. Click an inventory card or drag it onto a slot to equip. `CloudSaveManager.SaveString(activePrefsKey, activeValue)` on equip.
+
+**Key scripts:**
+- `LoadoutScript.cs` — main controller (`Assets/Scripts/MainMenu/`)
+- `LoadoutSlotUI.cs` — per-slot component; implements `IDropHandler`, `IPointerClickHandler`
+- `LoadoutInventoryItemUI.cs` — per-card component; implements drag (`IBeginDragHandler`, `IDragHandler`, `IEndDragHandler`) + `IPointerClickHandler`
+- `LoadoutItemData.cs` — `[System.Serializable]` data class (no MonoBehaviour); fields: `displayName`, `icon`, `category`, `activeValue`, `activePrefsKey`, `ownedKey`, `alwaysOwned`, `isStackable`, `countKey`
+
+**Inventory card prefab:** `Assets/Prefabs/InventoryCard.prefab` — 130×130, has `LoadoutInventoryItemUI` + `CanvasGroup` + children: `Img_Icon`, `Txt_Name`, `Txt_StackCount`. Assign to `LoadoutScript.inventoryItemPrefab`.
+
+**Empty slot icon:** `LoadoutScript.emptySlotIcon` — a single fallback sprite shown in slots and inventory cards when no icon is assigned. Set once in Inspector.
+
+**`allItems` list (configure in Inspector):**
+- Items: each with `category="Item"`, `activePrefsKey="ActiveItem"`, `isStackable=true`, `countKey="ItemCount_X"`, `activeValue="X"`; plus a "No Item" entry with `alwaysOwned=true`, `activeValue=""`
+- Skins: `category="Skin"`, `activePrefsKey="ActiveSkin"`, `ownedKey="HasSkin_X"`, `activeValue="X"`; benjo-bird has `alwaysOwned=true`
+- Trails: `category="Trail"`, `activePrefsKey="ActiveTrail"`, `ownedKey="HasTrailX"`; "No Trail" entry `alwaysOwned=true`, `activeValue=""`
+- Pets: `category="Pet"`, `activePrefsKey="ActivePet"`, `ownedKey="HasPet[Name]"`; "No Pet" entry `alwaysOwned=true`, `activeValue=""`
+- Biomes: `category="Biome"`, `activePrefsKey="ActiveBiome"`; Mountain `alwaysOwned=true`
 
 ### AnimateSlider Pattern (TabController, ShopPageSwitcher, MenuHandlerScript)
 All slider animations: `Mathf.Lerp` on `localPosition.x` + `sizeDelta.x` in Coroutine (0.2s).

@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class SpeedManagerCannabisScript : MonoBehaviour
 {
+    public static float startSpeed = 10f;
     public static float currentSpeed = 10f;
     public static float acceleration = 0.1f;
     public static float maxSpeed = 20f;
@@ -9,12 +10,17 @@ public class SpeedManagerCannabisScript : MonoBehaviour
 
     void Awake()
     {
-        // Sicherstellen, dass es nur eine Instanz gibt
         if (FindObjectsOfType<SpeedManagerCannabisScript>().Length > 1)
+            Debug.LogWarning("Mehrere SpeedManager vorhanden - das sollte nicht passieren!");
+
+        if (RemoteConfigManager.Instance != null)
         {
-            Debug.LogWarning("Mehrere SpeedManager vorhanden � das sollte nicht passieren!");
+            startSpeed   = RemoteConfigManager.Instance.LeafSpeedStart;
+            maxSpeed     = RemoteConfigManager.Instance.LeafSpeedMax;
+            currentSpeed = startSpeed;
         }
     }
+
     void Update()
     {
         currentSpeed += acceleration * Time.deltaTime;
@@ -23,8 +29,7 @@ public class SpeedManagerCannabisScript : MonoBehaviour
 
     public static void ResetSpeed()
     {
-        currentSpeed = 10f;
+        currentSpeed = RemoteConfigManager.Instance != null ? RemoteConfigManager.Instance.LeafSpeedStart : startSpeed;
         SlowMoMultiplier = 1f;
     }
 }
-

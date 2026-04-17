@@ -9,6 +9,12 @@ public class CannabisSpawnerScript : MonoBehaviour
 
     void Start()
     {
+        if (RemoteConfigManager.Instance != null)
+        {
+            spawnRate    = RemoteConfigManager.Instance.LeafSpawnRate;
+            heightOffset = RemoteConfigManager.Instance.LeafSpawnHeightRange;
+        }
+
         SpawnCannabis();
     }
 
@@ -23,7 +29,6 @@ public class CannabisSpawnerScript : MonoBehaviour
             SpawnCannabis();
             timer = 0;
         }
-
     }
 
     void SpawnCannabis()
