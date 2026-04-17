@@ -188,12 +188,18 @@ public class SteffScript : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
         }
 
-        myRigitbody.gravityScale = _originalGravityScale * SpeedManager.SlowMoMultiplier;
+        float gravSign = GravityInversionManager.IsInverted
+            ? -(RemoteConfigManager.Instance != null ? RemoteConfigManager.Instance.GravityInvertStrength : 0.75f)
+            : 1f;
+        myRigitbody.gravityScale = _originalGravityScale * gravSign * SpeedManager.SlowMoMultiplier;
 
         if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.JoystickButton0)) && steffIsAlive)
         {
             Vector2 flapDir = GravityInversionManager.IsInverted ? Vector2.down : Vector2.up;
-            myRigitbody.linearVelocity = flapDir * flapStrength * SpeedManager.SlowMoMultiplier;
+            float flapMult = GravityInversionManager.IsInverted
+                ? (RemoteConfigManager.Instance != null ? RemoteConfigManager.Instance.GravityFlapStrength : 0.75f)
+                : 1f;
+            myRigitbody.linearVelocity = flapDir * flapStrength * flapMult * SpeedManager.SlowMoMultiplier;
             if (weeklyMissionManager != null)
             {
                 weeklyMissionManager.UpdateMission(MissionType.TotalJumps, 1);

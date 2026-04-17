@@ -23,6 +23,7 @@ public class BootUpdateManager : MonoBehaviour
 
     private string installerUrl = "";
     private string installerFilePath = "";
+    private static readonly WaitForSeconds waitHalfSecond = new(0.5f);
 
     async void Start()
     {
@@ -167,7 +168,7 @@ public class BootUpdateManager : MonoBehaviour
     IEnumerator DownloadAndInstall()
     {
         updateText.text = "L�dt neue Version, Spiel NICHT manuell schlie�en...";
-        string tempPath = Path.Combine(Application.persistentDataPath, "SMTO_UpdateInstaller.exe");
+        string tempPath = Path.Combine(Path.GetTempPath(), "SMTO_UpdateInstaller.exe");
         installerFilePath = tempPath;
 
         UnityWebRequest request = UnityWebRequest.Get(installerUrl);
@@ -177,20 +178,30 @@ public class BootUpdateManager : MonoBehaviour
         if (request.result == UnityWebRequest.Result.Success)
         {
             UnityEngine.Debug.Log("Installer heruntergeladen, starte Installation...");
+            updateText.text = "Starting installer...";
+
+            // Exit fullscreen so the UAC elevation dialog is visible
+            if (Screen.fullScreen)
+            {
+                Screen.fullScreen = false;
+                yield return waitHalfSecond;
+            }
 
             try
             {
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = installerFilePath,
-                    UseShellExecute = true
+                    UseShellExecute = true,
+                    Verb = "runas"
                 });
                 Application.Quit();
             }
             catch (System.Exception e)
             {
                 UnityEngine.Debug.LogError("Installer konnte nicht gestartet werden: " + e.Message);
-                updateText.text = "Fehler beim Starten des Installers:\n" + e.Message;
+                updateText.text = "Error starting installer:\n" + e.Message;
+                Screen.fullScreen = true;
                 skipButton.gameObject.SetActive(true);
             }
         }

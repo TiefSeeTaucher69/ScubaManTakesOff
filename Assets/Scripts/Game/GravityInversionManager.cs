@@ -100,8 +100,6 @@ public class GravityInversionManager : MonoBehaviour
         // ═══ INVERSION-MOMENT: Wipe-Linie erreicht Bildschirmmitte ═══
         yield return new WaitForSeconds(warnDuration * 0.5f);
         IsInverted = true;
-        float invertScale = RemoteConfigManager.Instance != null ? RemoteConfigManager.Instance.GravityInvertStrength : 0.75f;
-        steff.myRigitbody.gravityScale = -_originalGravityScale * invertScale;
         if (CameraShakeScript.Instance != null)
             CameraShakeScript.Instance.Shake(0.25f, 0.25f);
 
@@ -123,7 +121,6 @@ public class GravityInversionManager : MonoBehaviour
         // ═══ REVERT-MOMENT: Wipe-Linie erreicht Bildschirmmitte ═══
         yield return new WaitForSeconds(warnDuration * 0.5f);
         IsInverted = false;
-        steff.myRigitbody.gravityScale = _originalGravityScale;
         if (CameraShakeScript.Instance != null)
             CameraShakeScript.Instance.Shake(0.18f, 0.18f);
 

@@ -84,6 +84,7 @@ public class RemoteConfigManager : MonoBehaviour
     public float GravityCooldownMax      { get; private set; } = 55f;
     public float GravityInvertDuration   { get; private set; } = 7f;
     public float GravityInvertStrength   { get; private set; } = 0.75f;
+    public float GravityFlapStrength     { get; private set; } = 0.75f;
 
     // ── XP ────────────────────────────────────────────────────────────────────
     public int   XPMaxLevel              { get; private set; } = 100;
@@ -138,6 +139,7 @@ public class RemoteConfigManager : MonoBehaviour
         GravityCooldownMax      = rc.GetFloat("event_gravity_cooldown_max_sec",      GravityCooldownMax);
         GravityInvertDuration   = rc.GetFloat("event_gravity_duration_sec",          GravityInvertDuration);
         GravityInvertStrength   = rc.GetFloat("event_gravity_invert_strength",       GravityInvertStrength);
+        GravityFlapStrength     = rc.GetFloat("event_gravity_flap_strength",         GravityFlapStrength);
 
         XPMaxLevel            = rc.GetInt  ("xp_max_level",                  XPMaxLevel);
         XPPerLevelMultiplier  = rc.GetInt  ("xp_per_level_multiplier",       XPPerLevelMultiplier);
