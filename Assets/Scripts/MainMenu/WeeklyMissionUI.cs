@@ -49,10 +49,7 @@ public class WeeklyMissionUI : MonoBehaviour
         Debug.Log("WeeklyMissionUI.UpdateUI aufgerufen");
 
         if (!gameObject.activeInHierarchy)
-        {
-            Debug.LogWarning("WeeklyMissionUI ist nicht aktiv in der Hierarchie.");
             return;
-        }
 
         if (missionManager == null)
         {

@@ -174,7 +174,7 @@ public class PetCompanionScript : MonoBehaviour
 
         // CannabisCollisionScript sitzt auf dem Child (cannabis_0) — das ist die sichtbare
         // Blatt-Position. CannabisMovementScript sitzt auf dem Root, der ~10 Einheiten daneben liegt.
-        foreach (var l in FindObjectsByType<CannabisCollisionScript>(FindObjectsSortMode.None))
+        foreach (var l in CannabisCollisionScript.All)
         {
             // Nur Blätter die noch VOR dem Pet sind (noch nicht vorbeigeflogen)
             bool passedPet = DirectionFlipManager.IsFlipped

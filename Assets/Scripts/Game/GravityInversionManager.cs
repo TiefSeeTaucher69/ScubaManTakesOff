@@ -66,8 +66,8 @@ public class GravityInversionManager : MonoBehaviour
 
     void Update()
     {
-        if (_eventRunning && !steff.steffIsAlive) { StopAllCoroutines(); ResetState(); return; }
-        if (_eventRunning || !steff.steffIsAlive || RankedManager.IsRanked) return;
+        if (_eventRunning && (steff == null || !steff.steffIsAlive)) { StopAllCoroutines(); ResetState(); return; }
+        if (_eventRunning || steff == null || !steff.steffIsAlive || RankedManager.IsRanked) return;
 
         _timer -= Time.deltaTime;
         if (_timer > 0f) return;

@@ -62,12 +62,6 @@ public class MenuHandlerScript : MonoBehaviour
         Debug.Log("Game Started");
     }
 
-    public void LoadItemShop()
-    {
-        Debug.Log("Loading Item Shop Scene");
-        SceneManager.LoadScene("ItemShop");
-    }
-
     async void Start()
     {
         Cursor.visible = true;
@@ -78,11 +72,11 @@ public class MenuHandlerScript : MonoBehaviour
         }
 
         int highscore = PlayerPrefs.GetInt("Highscore", 0);
-        highscoreText.text = highscore.ToString();
+        if (highscoreText != null) highscoreText.text = highscore.ToString();
         Debug.Log("Highscore loaded: " + highscore);
 
         string username = PlayerPrefs.GetString("Username", "Guest");
-        usernameText.text = username.ToString();
+        if (usernameText != null) usernameText.text = username;
 
         RankedManager.IsRanked = false;
 
@@ -98,8 +92,8 @@ public class MenuHandlerScript : MonoBehaviour
         OnScoreboardQuickplay();
         InitRankedInfo();
 
-        cannabisStash.text = PlayerPrefs.GetInt("CannabisStash", 0).ToString();
-        Debug.Log("Cannabis stash loaded: " + cannabisStash.text);
+        if (cannabisStash != null)
+            cannabisStash.text = PlayerPrefs.GetInt("CannabisStash", 0).ToString();
 
         Debug.Log("WeeklyMissionRewardScript im MenuHandler: " + (weeklyMissionRewardScript != null));
         var missionManager = WeeklyMissionManager.Instance;
@@ -281,8 +275,14 @@ public class MenuHandlerScript : MonoBehaviour
 
             if (txtRankField != null && txtUsernameField != null && txtScoreField != null)
             {
+                string fullPlayerName = (AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn)
+                    ? AuthenticationService.Instance.PlayerName : null;
+                bool isLocalPlayer = !string.IsNullOrEmpty(fullPlayerName) && entry.username == fullPlayerName;
+
                 txtRankField.text     = "#" + entry.rank;
-                txtUsernameField.text = entry.username;
+                txtUsernameField.text = isLocalPlayer
+                    ? entry.username + " <color=#00e676>(You)</color>"
+                    : entry.username;
                 txtScoreField.text    = entry.score.ToString();
 
                 Color entryColor = entry.rank switch

@@ -10,7 +10,7 @@ public class SpeedManager : MonoBehaviour
 
     void Awake()
     {
-        if (FindObjectsOfType<SpeedManager>().Length > 1)
+        if (FindObjectsByType<SpeedManager>(FindObjectsSortMode.None).Length > 1)
             Debug.LogWarning("Mehrere SpeedManager vorhanden - das sollte nicht passieren!");
 
         if (RemoteConfigManager.Instance != null)

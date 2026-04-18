@@ -24,6 +24,7 @@ public class BiomeManager : MonoBehaviour
 
     public static Material ActivePipeMaterial { get; private set; }
 
+    private Sprite     _bgSprite     = null;
     private bool       _scrolling    = false;
     private float      _bgWorldWidth = 0f;
     private float      _scrollOffset = 0f;   // einzige Source of Truth — kein Float-Akkumulationsfehler
@@ -49,11 +50,12 @@ public class BiomeManager : MonoBehaviour
             {
                 var tex = entry.backgroundTexture;
                 float ppu = 100f;
-                backgroundRenderer.sprite = Sprite.Create(
+                _bgSprite = Sprite.Create(
                     tex,
                     new Rect(0, 0, tex.width, tex.height),
                     new Vector2(0.5f, 0.5f),
                     ppu);
+                backgroundRenderer.sprite = _bgSprite;
                 backgroundRenderer.color = Color.white;
 
                 Camera cam = Camera.main;
@@ -124,7 +126,7 @@ public class BiomeManager : MonoBehaviour
     void OnDestroy()
     {
         ActivePipeMaterial = null;
-        if (_tileBObject != null)
-            Destroy(_tileBObject);
+        if (_tileBObject != null) Destroy(_tileBObject);
+        if (_bgSprite     != null) Destroy(_bgSprite);
     }
 }

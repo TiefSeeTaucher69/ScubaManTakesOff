@@ -109,29 +109,6 @@ public class WeeklyMissionRewardScript : MonoBehaviour
         Debug.Log("FadeInPanel beendet, Alpha = 1");
     }
 
-    IEnumerator AnimateRewardImage()
-    {
-        Transform img = rewardImage.transform;
-        Vector3 start = img.localPosition;
-        Quaternion startRot = img.rotation;
-
-        float height = 50f;
-        float duration = 0.6f;
-        float t = 0;
-
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            float h = 4 * height * t * (1 - t);
-            img.localPosition = start + Vector3.up * h;
-            img.rotation = startRot * Quaternion.Euler(0, 360 * t, 0);
-            yield return null;
-        }
-
-        img.localPosition = start;
-        img.rotation = startRot;
-    }
-
     public void ClosePanel()
     {
         panel.SetActive(false);

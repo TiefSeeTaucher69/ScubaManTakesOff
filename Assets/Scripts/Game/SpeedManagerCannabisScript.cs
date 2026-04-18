@@ -10,13 +10,14 @@ public class SpeedManagerCannabisScript : MonoBehaviour
 
     void Awake()
     {
-        if (FindObjectsOfType<SpeedManagerCannabisScript>().Length > 1)
+        if (FindObjectsByType<SpeedManagerCannabisScript>(FindObjectsSortMode.None).Length > 1)
             Debug.LogWarning("Mehrere SpeedManager vorhanden - das sollte nicht passieren!");
 
         if (RemoteConfigManager.Instance != null)
         {
             startSpeed   = RemoteConfigManager.Instance.LeafSpeedStart;
             maxSpeed     = RemoteConfigManager.Instance.LeafSpeedMax;
+            acceleration = RemoteConfigManager.Instance.LeafSpeedAcceleration;
             currentSpeed = startSpeed;
         }
     }

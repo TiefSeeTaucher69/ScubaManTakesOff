@@ -6,7 +6,7 @@ public class MusicPlayerScript : MonoBehaviour
     public List<AudioClip> songs; // zieh die Songs hier rein im Inspector
     public AudioSource audioSource;
 
-    private List<int> playedIndices = new List<int>();
+    private HashSet<int> playedIndices = new HashSet<int>();
 
     void Start()
     {

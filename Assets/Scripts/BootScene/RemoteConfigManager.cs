@@ -37,6 +37,7 @@ public class RemoteConfigManager : MonoBehaviour
     // ── Leaf (Cannabis) Speed ─────────────────────────────────────────────────
     public float LeafSpeedStart        { get; private set; } = 10f;
     public float LeafSpeedMax          { get; private set; } = 20f;
+    public float LeafSpeedAcceleration { get; private set; } = 0.1f;
 
     // ── Pipe Spawning ─────────────────────────────────────────────────────────
     public float PipeSpawnRateBase     { get; private set; } = 3f;
@@ -106,6 +107,7 @@ public class RemoteConfigManager : MonoBehaviour
         PipeSpeedAcceleration = rc.GetFloat("pipe_speed_acceleration",        PipeSpeedAcceleration);
         LeafSpeedStart        = rc.GetFloat("leaf_speed_start",               LeafSpeedStart);
         LeafSpeedMax          = rc.GetFloat("leaf_speed_max",                 LeafSpeedMax);
+        LeafSpeedAcceleration = rc.GetFloat("leaf_speed_acceleration",        LeafSpeedAcceleration);
 
         PipeSpawnRateBase     = rc.GetFloat("pipe_spawn_interval_base_sec",    PipeSpawnRateBase);
         PipeSpawnRateMin      = rc.GetFloat("pipe_spawn_interval_min_sec",     PipeSpawnRateMin);

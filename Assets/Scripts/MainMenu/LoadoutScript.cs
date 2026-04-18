@@ -56,9 +56,7 @@ public class LoadoutScript : MonoBehaviour
         // Keep alwaysOwned sentinel entries (e.g. "No Pet", "Mountain"); strip stale data entries
         allItems.RemoveAll(d => (d.category == "Pet" || d.category == "Biome") && !d.alwaysOwned);
 
-#pragma warning disable CS0618
-        var petHandler = FindObjectOfType<PetShopHandler>(true);
-#pragma warning restore CS0618
+        var petHandler = FindFirstObjectByType<PetShopHandler>(FindObjectsInactive.Include);
         if (petHandler != null)
         {
             foreach (var pet in petHandler.pets)
@@ -73,9 +71,7 @@ public class LoadoutScript : MonoBehaviour
                 });
         }
 
-#pragma warning disable CS0618
-        var biomeHandler = FindObjectOfType<BiomeShopHandler>(true);
-#pragma warning restore CS0618
+        var biomeHandler = FindFirstObjectByType<BiomeShopHandler>(FindObjectsInactive.Include);
         if (biomeHandler != null)
         {
             foreach (var biome in biomeHandler.biomes)

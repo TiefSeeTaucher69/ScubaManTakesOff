@@ -10,13 +10,7 @@ public class EscapeSceneHandlerScript : MonoBehaviour
         Debug.Log("Game Quit");
         Application.Quit();
     }
-
-    public void LoadSettingsScene()
-    {
-               // Logic to load the settings scene
-        Debug.Log("Settings Scene Loaded");
-        SceneManager.LoadScene("SettingsScene"); 
-    }
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

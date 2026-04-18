@@ -16,7 +16,7 @@ public class SlowMoManager : MonoBehaviour
 
     void Start()
     {
-        steff = FindObjectOfType<SteffScript>();
+        steff = FindFirstObjectByType<SteffScript>();
 
         if (RemoteConfigManager.Instance != null)
         {

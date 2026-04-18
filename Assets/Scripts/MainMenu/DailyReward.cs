@@ -139,36 +139,5 @@ public class DailyReward : MonoBehaviour
         canvasGroup.alpha = 1f;
     }
 
-    IEnumerator AnimateRewardImage()
-    {
-        Transform imgTransform = rewardImage.transform;
-        Vector3 startPos = imgTransform.localPosition;
-        Quaternion startRot = imgTransform.rotation;
-
-        float jumpHeight = 50f;
-        float rotationAmount = 360f;
-        float duration = 0.6f;
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
-
-            // Springen (parabolisch)
-            float height = 4 * jumpHeight * t * (1 - t);
-            imgTransform.localPosition = startPos + Vector3.up * height;
-
-            // Rotation
-            imgTransform.rotation = startRot * Quaternion.Euler(0, rotationAmount * t, 0);
-
-            yield return null;
-        }
-
-        // Rücksetzen
-        imgTransform.localPosition = startPos;
-        imgTransform.rotation = startRot;
-    }
-
 }
 

@@ -24,7 +24,7 @@ public class LogicScript : MonoBehaviour
     private void Start()
     {
         if (steff == null)
-            steff = FindObjectOfType<SteffScript>();
+            steff = FindFirstObjectByType<SteffScript>();
 
         highScore = PlayerPrefs.GetInt("Highscore", 0);
         leaderboardSenderScript = GameObject.Find("LeaderboardSender").GetComponent<LeaderboardSenderScript>();
@@ -150,7 +150,7 @@ public class LogicScript : MonoBehaviour
     {
         Debug.Log("Going to main menu");
         SceneManager.LoadScene("MainMenu");
-        WeeklyMissionManager.Instance.NotifyMissionsLoaded();
+        WeeklyMissionManager.Instance?.NotifyMissionsLoaded();
     }
 
     private IEnumerator AnimateCannabisCollected(Transform iconTransform)

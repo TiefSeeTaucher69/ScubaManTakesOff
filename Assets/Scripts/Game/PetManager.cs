@@ -25,8 +25,8 @@ public class PetManager : MonoBehaviour
             if (e.petName == active) { prefab = e.prefab; break; }
         if (prefab == null) return;
 
-        var steff = FindObjectOfType<SteffScript>();
-        var logic = FindObjectOfType<LogicScript>();
+        var steff = FindFirstObjectByType<SteffScript>();
+        var logic = FindFirstObjectByType<LogicScript>();
         if (steff == null || logic == null) return;
 
         var pet = Instantiate(prefab, steff.transform.position + new Vector3(-1.8f, 0f, 0f), Quaternion.identity);

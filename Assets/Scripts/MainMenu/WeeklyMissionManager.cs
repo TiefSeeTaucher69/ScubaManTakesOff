@@ -46,19 +46,20 @@ public class WeeklyMissionManager : MonoBehaviour
         }
 
         Instance = this;
+        if (transform.parent != null) transform.SetParent(null);
         DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
-        LoadMissions();
-        CheckCompletedMissions();
+        LoadMissions(); // already calls CheckCompletedMissions() internally
     }
 
     public void LoadMissions()
     {
-        DateTime now = DateTime.Now;
-        DateTime thisMonday = now.Date.AddDays(-(int)now.DayOfWeek + (int)DayOfWeek.Monday);
+        DateTime now = DateTime.UtcNow;
+        int daysBack = now.DayOfWeek == DayOfWeek.Sunday ? 6 : (int)now.DayOfWeek - 1;
+        DateTime thisMonday = now.Date.AddDays(-daysBack);
 
         if (!PlayerPrefs.HasKey("WeeklyMissionStartTime"))
         {
@@ -194,15 +195,9 @@ public class WeeklyMissionManager : MonoBehaviour
     {
         foreach (var activeMission in activeMissions)
         {
-            if (activeMission.type == 0)
-            {
-                var originalMission = allPossibleMissions.FirstOrDefault(m => m.id == activeMission.id);
-                if (originalMission != null)
-                {
-                    activeMission.type = originalMission.type;
-                    Debug.Log($"Type korrigiert für Mission {activeMission.id}: {activeMission.type}");
-                }
-            }
+            var originalMission = allPossibleMissions.FirstOrDefault(m => m.id == activeMission.id);
+            if (originalMission != null)
+                activeMission.type = originalMission.type;
         }
     }
 

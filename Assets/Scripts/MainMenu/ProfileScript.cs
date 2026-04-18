@@ -40,7 +40,14 @@ public class ProfileScript : MonoBehaviour
     private void RefreshProfile()
     {
         string name = PlayerPrefs.GetString("Username", "Guest");
-        txtUsername.text = name;
+        string displayName = name;
+        if (AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn)
+        {
+            string fullName = AuthenticationService.Instance.PlayerName;
+            if (!string.IsNullOrEmpty(fullName))
+                displayName = fullName;
+        }
+        txtUsername.text = displayName;
         txtAvatar.text = name.Length > 0 ? name[0].ToString().ToUpper() : "?";
     }
 

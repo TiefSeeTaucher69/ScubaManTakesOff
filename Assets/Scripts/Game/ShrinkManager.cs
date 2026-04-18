@@ -19,7 +19,7 @@ public class ShrinkManager : MonoBehaviour
     void Start()
     {
         originalScale = transform.localScale;
-        steff = FindObjectOfType<SteffScript>();
+        steff = FindFirstObjectByType<SteffScript>();
 
         if (RemoteConfigManager.Instance != null)
         {

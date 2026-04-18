@@ -15,11 +15,12 @@ public class InvincibilityManager : MonoBehaviour
     private bool isInvincible = false;
     private bool isOnCooldown = false;
     private float cooldownTimer = 0f;
+    private Coroutine _blinkCoroutine;
     private SteffScript steff;
 
     private void Start()
     {
-        steff = FindObjectOfType<SteffScript>();
+        steff = FindFirstObjectByType<SteffScript>();
 
         if (RemoteConfigManager.Instance != null)
         {
@@ -93,6 +94,24 @@ public class InvincibilityManager : MonoBehaviour
         isInvincible = true;
         playerCollider.enabled = false;
 
+        _blinkCoroutine = StartCoroutine(BlinkEffect());
+        yield return new WaitForSeconds(invincibilityDuration);
+
+        if (_blinkCoroutine != null) { StopCoroutine(_blinkCoroutine); _blinkCoroutine = null; }
+
+        Color resetColor = spriteRenderer.color;
+        resetColor.a = 1f;
+        spriteRenderer.color = resetColor;
+
+        playerCollider.enabled = true;
+        isInvincible = false;
+
+        isOnCooldown = true;
+        cooldownTimer = cooldownTime;
+    }
+
+    private IEnumerator BlinkEffect()
+    {
         float elapsed = 0f;
         float blinkInterval = 0.4f;
 
@@ -104,18 +123,7 @@ public class InvincibilityManager : MonoBehaviour
 
             yield return new WaitForSeconds(blinkInterval);
             elapsed += blinkInterval;
-
             blinkInterval = Mathf.Max(0.05f, blinkInterval * 0.8f);
         }
-
-        Color resetColor = spriteRenderer.color;
-        resetColor.a = 1f;
-        spriteRenderer.color = resetColor;
-
-        playerCollider.enabled = true;
-        isInvincible = false;
-
-        isOnCooldown = true;
-        cooldownTimer = cooldownTime;
     }
 }

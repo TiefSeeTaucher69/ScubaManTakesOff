@@ -3,10 +3,15 @@ using System.Collections;
 
 public class CannabisCollisionScript : MonoBehaviour
 {
+    public static readonly System.Collections.Generic.HashSet<CannabisCollisionScript> All = new();
+
     public LogicScript logic;
     public SteffScript steffReference;
     private bool canTrigger = true;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    void OnEnable()  => All.Add(this);
+    void OnDisable() => All.Remove(this);
+
     void Start()
     {
         logic = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicScript>();
@@ -27,7 +32,7 @@ public class CannabisCollisionScript : MonoBehaviour
         {
             canTrigger = false;
             logic.addCannabisScore(1);
-            Destroy(gameObject); // Cannabis-Objekt zerstören
+            Destroy(gameObject); // Cannabis-Objekt zerstï¿½ren
         }
     }
 

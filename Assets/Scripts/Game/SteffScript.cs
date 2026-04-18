@@ -30,7 +30,7 @@ public class SteffScript : MonoBehaviour
         Cursor.visible = false;
         logic = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicScript>();
         hitAudioSource = GetComponent<AudioSource>();
-        weeklyMissionManager = FindObjectOfType<WeeklyMissionManager>();
+        weeklyMissionManager = FindFirstObjectByType<WeeklyMissionManager>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         // === Lade Skin ===
@@ -73,7 +73,7 @@ public class SteffScript : MonoBehaviour
         {
             Debug.LogWarning("Sprite nicht gefunden f�r Skin: " + selectedSkin + ". Verwende benjo-bird als Fallback.");
             spriteRenderer.sprite = Resources.Load<Sprite>("Skins/benjo-bird");
-            transform.localScale = new Vector3(0.8f, 0.7f, 1f);
+            transform.localScale = new Vector3(0.8f, 0.8f, 1f);
         }
 
         // Joint Offset setzen
@@ -114,7 +114,7 @@ public class SteffScript : MonoBehaviour
         if (settingsOnPauseScreen != null)
             settingsOnPauseScreen.SetActive(false);
 
-        shieldManager = FindObjectOfType<ShieldManager>();
+        shieldManager = FindFirstObjectByType<ShieldManager>();
         _originalGravityScale = myRigitbody.gravityScale;
     }
 

@@ -17,7 +17,7 @@ public class ShieldManager : MonoBehaviour
 
     void Start()
     {
-        steff = FindObjectOfType<SteffScript>();
+        steff = FindFirstObjectByType<SteffScript>();
 
         if (RemoteConfigManager.Instance != null)
         {

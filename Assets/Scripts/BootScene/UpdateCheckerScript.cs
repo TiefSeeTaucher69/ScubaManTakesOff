@@ -132,7 +132,7 @@ public class BootUpdateManager : MonoBehaviour
 
             UnityEngine.Debug.Log($"Neueste Version: {latest.tag_name}, Aktuelle Version: {currentVersion}");
 
-            if (IsNewerVersion(latest.tag_name, currentVersion) && latest.assets.Length > 0)
+            if (IsNewerVersion(latest.tag_name, currentVersion) && latest.assets != null && latest.assets.Length > 0)
             {
                 installerUrl = latest.assets[0].browser_download_url;
                 updateText.text = $"Ein neues Update ({latest.tag_name}) ist verf�gbar!";

@@ -21,6 +21,12 @@ public class PipeBreaker : MonoBehaviour
 
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning("[PipeBreaker] Duplicate instance destroyed.");
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
     }
 

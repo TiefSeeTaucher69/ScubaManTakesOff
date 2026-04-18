@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class CursorManager : MonoBehaviour
+public class CursorManagerPersistent : MonoBehaviour
 {
-    public static CursorManager Instance { get; private set; }
+    public static CursorManagerPersistent Instance { get; private set; }
 
     public string gameSceneName = "GameScene";
 
@@ -16,12 +16,7 @@ public class CursorManager : MonoBehaviour
     void Awake()
     {
         // Singleton: sicherstellen, dass nur eine Instanz existiert
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
@@ -55,7 +50,7 @@ public class CursorManager : MonoBehaviour
             cachedSteff = null;
         }
         if (cachedSteff == null)
-            cachedSteff = FindObjectOfType<SteffScript>();
+            cachedSteff = FindFirstObjectByType<SteffScript>();
 
         isPausedExtern = (cachedSteff != null) && cachedSteff.IsPaused();
         bool isDead = (cachedSteff != null) && !cachedSteff.steffIsAlive;

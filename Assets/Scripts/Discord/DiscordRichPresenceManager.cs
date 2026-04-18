@@ -26,6 +26,11 @@ public class DiscordRichPresenceManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        if (string.IsNullOrEmpty(clientId) || clientId == "DEINE_CLIENT_ID_HIER")
+        {
+            Debug.LogWarning("[Discord] clientId not set in Inspector — Rich Presence disabled.");
+            return;
+        }
         _client = new DiscordRpcClient(clientId);
         _client.Initialize();
 
@@ -43,7 +48,7 @@ public class DiscordRichPresenceManager : MonoBehaviour
 
         if (SceneManager.GetActiveScene().name != "GameScene") return;
 
-        var logic = FindObjectOfType<LogicScript>();
+        var logic = FindFirstObjectByType<LogicScript>();
         if (logic == null) return;
 
         SetPresenceGame(logic.playerScore, RankedManager.IsRanked);
@@ -93,7 +98,7 @@ public class DiscordRichPresenceManager : MonoBehaviour
             Instance.SetPresenceMenu("Im Hauptmenü");
         else if (scene == "GameScene")
         {
-            var logic = FindObjectOfType<LogicScript>();
+            var logic = FindFirstObjectByType<LogicScript>();
             if (logic != null)
                 Instance.SetPresenceGame(logic.playerScore, RankedManager.IsRanked);
         }

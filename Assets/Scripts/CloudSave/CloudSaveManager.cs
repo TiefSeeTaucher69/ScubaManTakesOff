@@ -116,6 +116,7 @@ public class CloudSaveManager : MonoBehaviour
     {
         try
         {
+            if (!Unity.Services.Authentication.AuthenticationService.Instance.IsSignedIn) return;
             await CloudSaveService.Instance.Data.Player.SaveAsync(data);
             Debug.Log($"[CloudSave] Gespeichert: {string.Join(", ", data.Keys)}");
         }

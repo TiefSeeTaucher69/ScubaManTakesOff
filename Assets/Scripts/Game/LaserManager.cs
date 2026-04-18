@@ -16,7 +16,7 @@ public class LaserManager : MonoBehaviour
 
     void Start()
     {
-        steff = FindObjectOfType<SteffScript>();
+        steff = FindFirstObjectByType<SteffScript>();
 
         if (RemoteConfigManager.Instance != null)
             cooldownTime = RemoteConfigManager.Instance.LaserCooldown;
