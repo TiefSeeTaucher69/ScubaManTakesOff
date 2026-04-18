@@ -45,7 +45,7 @@ public class StateManager : Singleton<StateManager>
 
         base.Awake();
 
-        inspectManager = FindObjectOfType<InspectManager>();
+        inspectManager = FindAnyObjectByType<InspectManager>();
 
 
         

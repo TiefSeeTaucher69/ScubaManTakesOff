@@ -18,7 +18,7 @@ namespace Assets.FantasyMonsters.Scripts
         public GameObject SelectedMonster;
         public Dropdown MonstersDropdown;
 
-        private static List<Monster> ActiveMonsters => FindObjectsOfType<Monster>().ToList();
+        private static List<Monster> ActiveMonsters => FindObjectsByType<Monster>(FindObjectsSortMode.None).ToList();
 
         #if UNITY_EDITOR
 

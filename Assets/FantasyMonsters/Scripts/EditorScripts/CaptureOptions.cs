@@ -22,7 +22,7 @@ namespace Assets.FantasyMonsters.Scripts.EditorScripts
 
         public void Capture()
         {
-            SpriteSheetCapture.Monster = FindObjectOfType<Monster>();
+            SpriteSheetCapture.Monster = FindAnyObjectByType<Monster>();
             SpriteSheetCapture.Monster.transform.Find("Shadow").gameObject.SetActive(Shadow.isOn);
             SpriteSheetCapture.Capture(int.Parse(FrameSize.text), int.Parse(FrameCount.text));
             Close();

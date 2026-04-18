@@ -20,7 +20,7 @@ namespace Assets.FantasyMonsters.Scripts.EditorScripts
 
         public void Capture(int frameSize, int frameCount)
         {
-            Monster = FindObjectOfType<Monster>();
+            Monster = FindAnyObjectByType<Monster>();
             StartCoroutine(CaptureCoroutine(frameSize, frameCount));
         }
 

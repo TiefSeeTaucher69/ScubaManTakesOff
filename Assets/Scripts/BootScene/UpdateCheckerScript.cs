@@ -92,7 +92,7 @@ public class BootUpdateManager : MonoBehaviour
             if (resIndex < resolutions.Length)
             {
                 Resolution res = resolutions[resIndex];
-                Screen.SetResolution(res.width, res.height, FullScreenMode.FullScreenWindow, res.refreshRate);
+                Screen.SetResolution(res.width, res.height, FullScreenMode.FullScreenWindow, res.refreshRateRatio);
                 UnityEngine.Debug.Log("Aufl�sung geladen aus PlayerPrefs: " + res.width + "x" + res.height);
             }
         }

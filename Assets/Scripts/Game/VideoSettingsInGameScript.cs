@@ -50,12 +50,12 @@ public class VideoSettingsInGameScript : MonoBehaviour
 
         for (int i = 0; i < resolutions.Length; i++)
         {
-            string option = resolutions[i].width + " x " + resolutions[i].height + " @ " + resolutions[i].refreshRate + "Hz";
+            string option = resolutions[i].width + " x " + resolutions[i].height + " @ " + resolutions[i].refreshRateRatio.numerator / resolutions[i].refreshRateRatio.denominator + "Hz";
             options.Add(option);
 
             if (resolutions[i].width == Screen.currentResolution.width &&
                 resolutions[i].height == Screen.currentResolution.height &&
-                resolutions[i].refreshRate == Screen.currentResolution.refreshRate)
+                resolutions[i].refreshRateRatio.numerator / resolutions[i].refreshRateRatio.denominator == Screen.currentResolution.refreshRate)
             {
                 currentResIndex = i;
             }
@@ -129,7 +129,7 @@ public class VideoSettingsInGameScript : MonoBehaviour
     void ApplyResolution(int index)
     {
         Resolution res = resolutions[index];
-        Screen.SetResolution(res.width, res.height, Screen.fullScreenMode, res.refreshRate);
+        Screen.SetResolution(res.width, res.height, Screen.fullScreenMode, res.refreshRateRatio);
         Debug.Log("Aufl�sung gesetzt auf: " + res.width + "x" + res.height);
     }
 }
