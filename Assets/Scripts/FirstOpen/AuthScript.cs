@@ -2,10 +2,10 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using Unity.Services.Authentication;
 using Unity.Services.Authentication.PlayerAccounts;
 using Unity.Services.Core;
+using Michsky.LSS;
 
 /// <summary>
 /// Wird in der FirstOpen-Szene verwendet.
@@ -143,7 +143,7 @@ public class AuthScript : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene("MainMenu");
+            LSS_LoadingScreen.LoadScene("MainMenu");
         }
     }
 
@@ -169,7 +169,7 @@ public class AuthScript : MonoBehaviour
                 CloudSaveManager.Instance.SaveString("Username", name);
 
             Debug.Log("[Auth] Username gespeichert: " + name);
-            SceneManager.LoadScene("MainMenu");
+            LSS_LoadingScreen.LoadScene("MainMenu");
         }
         catch (Exception e)
         {

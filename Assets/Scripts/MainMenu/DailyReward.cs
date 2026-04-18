@@ -109,7 +109,7 @@ public class DailyReward : MonoBehaviour
             { "CannabisStash",  newStash     },
             { rewardKey,        currentDate  }
         });
-        cannabisStashText.text = newStash.ToString();
+        if (cannabisStashText != null) cannabisStashText.text = newStash.ToString();
 
         ToastManager.Show($"Daily reward! +{cannabisRewardToAdd} Cannabis", ToastType.Reward);
         ClosePanel();

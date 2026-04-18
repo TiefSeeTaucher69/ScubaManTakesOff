@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using Michsky.LSS;
 using UnityEngine.UI;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -58,7 +58,7 @@ public class MenuHandlerScript : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("GameScene");
+        LSS_LoadingScreen.LoadScene("GameScene", "StandardPAK");
         Debug.Log("Game Started");
     }
 

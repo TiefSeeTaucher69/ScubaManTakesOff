@@ -27,7 +27,7 @@ public class SlowMoManager : MonoBehaviour
 
         // Migration: players who owned the old 0/1 flag get 1 free stack
         if (PlayerPrefs.GetInt("HasSlowMoItem", 0) == 1 && PlayerPrefs.GetInt("ItemCount_SlowMo", 0) == 0)
-            PlayerPrefs.SetInt("ItemCount_SlowMo", 1);
+            CloudSaveManager.Instance.SaveInt("ItemCount_SlowMo", 1);
 
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "SlowMo";
         bool isEquipped   = !RankedManager.IsRanked

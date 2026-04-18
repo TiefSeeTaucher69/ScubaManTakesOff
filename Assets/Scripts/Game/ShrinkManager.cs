@@ -18,7 +18,6 @@ public class ShrinkManager : MonoBehaviour
 
     void Start()
     {
-        originalScale = transform.localScale;
         steff = FindFirstObjectByType<SteffScript>();
 
         if (RemoteConfigManager.Instance != null)
@@ -31,7 +30,7 @@ public class ShrinkManager : MonoBehaviour
 
         // Migration: players who owned the old 0/1 flag get 1 free stack
         if (PlayerPrefs.GetInt("HasShrinkItem", 0) == 1 && PlayerPrefs.GetInt("ItemCount_Shrink", 0) == 0)
-            PlayerPrefs.SetInt("ItemCount_Shrink", 1);
+            CloudSaveManager.Instance.SaveInt("ItemCount_Shrink", 1);
 
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "Shrink";
         bool isEquipped   = !RankedManager.IsRanked
@@ -81,6 +80,7 @@ public class ShrinkManager : MonoBehaviour
 
     IEnumerator ActivateShrink()
     {
+        originalScale = transform.localScale; // capture after skin scale has been applied
         isShrunk = true;
         transform.localScale = shrinkScale;
 

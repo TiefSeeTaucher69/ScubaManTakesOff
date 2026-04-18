@@ -30,7 +30,7 @@ public class InvincibilityManager : MonoBehaviour
 
         // Migration: players who owned the old 0/1 flag get 1 free stack
         if (PlayerPrefs.GetInt("HasInvincibleItem", 0) == 1 && PlayerPrefs.GetInt("ItemCount_Invincible", 0) == 0)
-            PlayerPrefs.SetInt("ItemCount_Invincible", 1);
+            CloudSaveManager.Instance.SaveInt("ItemCount_Invincible", 1);
 
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "Invincible";
         bool isEquipped   = !RankedManager.IsRanked

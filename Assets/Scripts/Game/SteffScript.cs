@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using Michsky.LSS;
 
 public class SteffScript : MonoBehaviour
 {
@@ -28,7 +28,7 @@ public class SteffScript : MonoBehaviour
     void Start()
     {
         Cursor.visible = false;
-        logic = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicScript>();
+        logic = FindFirstObjectByType<LogicScript>();
         hitAudioSource = GetComponent<AudioSource>();
         weeklyMissionManager = FindFirstObjectByType<WeeklyMissionManager>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -287,7 +287,7 @@ public class SteffScript : MonoBehaviour
     {
         ResumeGame();
         steffIsAlive = false;
-        SceneManager.LoadScene("MainMenu");
+        LSS_LoadingScreen.LoadScene("MainMenu", "Standard");
     }
 
     public void QuitFromPause()

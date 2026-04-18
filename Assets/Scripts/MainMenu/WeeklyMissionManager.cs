@@ -167,8 +167,9 @@ public class WeeklyMissionManager : MonoBehaviour
             if (wrapper == null || wrapper.missions == null)
             {
                 Debug.LogWarning("Weekly Missions JSON ist leer oder ungültig. Neue Missionen werden generiert.");
-                DateTime thisMonday = DateTime.Now.Date.AddDays(-(int)DateTime.Now.DayOfWeek + (int)DayOfWeek.Monday);
-                GenerateNewWeeklyMissions(thisMonday);
+                DateTime utcNow = DateTime.UtcNow;
+                int daysBack = utcNow.DayOfWeek == DayOfWeek.Sunday ? 6 : (int)utcNow.DayOfWeek - 1;
+                GenerateNewWeeklyMissions(utcNow.Date.AddDays(-daysBack));
                 return;
             }
 
@@ -186,8 +187,9 @@ public class WeeklyMissionManager : MonoBehaviour
             Debug.LogWarning("Fehler beim Laden der Weekly Missions: " + e.Message);
             activeMissions = new List<Mission>();
 
-            DateTime thisMonday = DateTime.Now.Date.AddDays(-(int)DateTime.Now.DayOfWeek + (int)DayOfWeek.Monday);
-            GenerateNewWeeklyMissions(thisMonday);
+            DateTime utcNow = DateTime.UtcNow;
+            int daysBack = utcNow.DayOfWeek == DayOfWeek.Sunday ? 6 : (int)utcNow.DayOfWeek - 1;
+            GenerateNewWeeklyMissions(utcNow.Date.AddDays(-daysBack));
         }
     }
 

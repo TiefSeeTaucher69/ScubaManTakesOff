@@ -1,9 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class WeeklyMissionRewardScript : MonoBehaviour
 {
+    private struct PendingReward { public string name; public string id; }
+
     public GameObject panel;
     public TMPro.TMP_Text statusText;
     public Button collectButton;
@@ -15,6 +18,8 @@ public class WeeklyMissionRewardScript : MonoBehaviour
     public int cannabisReward = 15;
 
     private string currentMissionId;
+    private readonly Queue<PendingReward> _rewardQueue = new Queue<PendingReward>();
+    private bool _showing = false;
 
     void Awake()
     {
@@ -26,9 +31,6 @@ public class WeeklyMissionRewardScript : MonoBehaviour
         rewardImage.sprite = rewardSprite;
     }
 
-    /// <summary>
-    /// Zeigt das Belohnungs-Panel an und speichert die aktuelle MissionId.
-    /// </summary>
     public void ShowReward(string missionName, string missionId)
     {
         Debug.Log("🌿 Zeige Weekly Mission Belohnung: " + missionName);
@@ -39,23 +41,31 @@ public class WeeklyMissionRewardScript : MonoBehaviour
             return;
         }
 
-        panel.SetActive(true);
+        _rewardQueue.Enqueue(new PendingReward { name = missionName, id = missionId });
+        if (!_showing)
+            ShowNext();
+    }
+
+    private void ShowNext()
+    {
+        if (_rewardQueue.Count == 0)
+        {
+            _showing = false;
+            return;
+        }
+
+        _showing = true;
+        PendingReward reward = _rewardQueue.Dequeue();
+        currentMissionId = reward.id;
 
         CanvasGroup cg = panel.GetComponent<CanvasGroup>();
         if (cg == null)
-        {
-            Debug.Log("Keine CanvasGroup gefunden, füge hinzu.");
             cg = panel.gameObject.AddComponent<CanvasGroup>();
-            cg.alpha = 0f;
-        }
-        else
-        {
-            cg.alpha = 0f; // Reset Alpha auf 0
-        }
+        cg.alpha = 0f;
 
-        currentMissionId = missionId;
-        statusText.text = $"Mission abgeschlossen:\n<b>{missionName}</b>";
+        statusText.text = $"Mission complete:\n<b>{reward.name}</b>";
         collectButton.interactable = true;
+        panel.SetActive(true);
 
         StartCoroutine(FadeInPanel());
     }
@@ -70,14 +80,12 @@ public class WeeklyMissionRewardScript : MonoBehaviour
         if (audioSource != null)
             audioSource.Play();
 
-        // Belohnung speichern
         int stash = PlayerPrefs.GetInt("CannabisStash", 0) + cannabisReward;
         CloudSaveManager.Instance.SaveInt("CannabisStash", stash);
 
         if (cannabisStashText != null)
             cannabisStashText.text = stash.ToString();
 
-        // Markiere Reward als gesammelt im WeeklyMissionManager
         if (!string.IsNullOrEmpty(currentMissionId))
         {
             WeeklyMissionManager.Instance.OnRewardCollected(currentMissionId);
@@ -85,6 +93,8 @@ public class WeeklyMissionRewardScript : MonoBehaviour
         }
 
         ToastManager.Show($"Mission complete! +{cannabisReward} Cannabis", ToastType.Reward);
+
+        ShowNext();
     }
 
     IEnumerator FadeInPanel()

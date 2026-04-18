@@ -2,15 +2,15 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using System.Diagnostics;
 using System.IO;
 using Unity.Services.Core;
 using Unity.Services.Authentication;
+using Michsky.LSS;
 
 public class BootUpdateManager : MonoBehaviour
 {
-    [Header("Versionseinstellungen")]
+    [Header("Version Settings")]
     private string currentVersion;
     public string apiUrl = "https://api.github.com/repos/TiefSeeTaucher69/ScubaManTakesOff/releases/latest";
 
@@ -21,17 +21,24 @@ public class BootUpdateManager : MonoBehaviour
     public Button skipButton;
     public TMPro.TMP_Text releaseNotesText; // Im Inspector zuweisen
 
+    [Header("Loading")]
+    public GameObject loadingPanel;
+    public TMPro.TMP_Text loadingStatusText;
+
     private string installerUrl = "";
     private string installerFilePath = "";
     private static readonly WaitForSeconds waitHalfSecond = new(0.5f);
 
     async void Start()
     {
-        UnityEngine.Debug.Log("Aktueller Build: " + Application.version);
+        UnityEngine.Debug.Log("Current build: " + Application.version);
         SetQualitySettings();
 
         currentVersion = "v" + Application.version;
+        LSS_LoadingScreen.presetName = "Standard";
         updatePanel.SetActive(false);
+        if (loadingPanel != null) loadingPanel.SetActive(true);
+        SetLoadingStatus("Connecting...");
 
         await InitializeUnityServicesAsync();
 
@@ -50,38 +57,39 @@ public class BootUpdateManager : MonoBehaviour
             {
                 if (AuthenticationService.Instance.SessionTokenExists && linked)
                 {
-                    // Bekannter Spieler mit echtem Player Accounts Login – automatisch einloggen
+                    SetLoadingStatus("Signing in...");
                     await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                    UnityEngine.Debug.Log("Auto-Login via Session Token. Player ID: " + AuthenticationService.Instance.PlayerId);
+                    UnityEngine.Debug.Log("Auto-login via session token. Player ID: " + AuthenticationService.Instance.PlayerId);
 
-                    // Cloud-Daten in PlayerPrefs laden
+                    SetLoadingStatus("Loading save data...");
                     if (CloudSaveManager.Instance != null)
                         await CloudSaveManager.Instance.LoadAllAsync();
-
-                    if (RemoteConfigManager.Instance != null)
-                        await RemoteConfigManager.Instance.FetchAsync();
                 }
-                // Kein Flag oder kein Session Token → FirstOpen zeigt Login-Screen
             }
             else
             {
-                UnityEngine.Debug.Log("Bereits eingeloggt. Player ID: " + AuthenticationService.Instance.PlayerId);
-
-                if (RemoteConfigManager.Instance != null)
-                    await RemoteConfigManager.Instance.FetchAsync();
+                UnityEngine.Debug.Log("Already signed in. Player ID: " + AuthenticationService.Instance.PlayerId);
             }
+
+            SetLoadingStatus("Fetching config...");
+            if (RemoteConfigManager.Instance != null)
+                await RemoteConfigManager.Instance.FetchAsync();
         }
         catch (System.Exception e)
         {
-            UnityEngine.Debug.LogWarning("Unity Services Initialisierung fehlgeschlagen (Session abgelaufen?): " + e.Message);
-            // Session abgelaufen oder Fehler → FirstOpen zeigt Login-Screen
+            UnityEngine.Debug.LogWarning("Unity Services initialization failed (session expired?): " + e.Message);
             try { AuthenticationService.Instance.SignOut(); } catch { }
         }
     }
 
+    private void SetLoadingStatus(string status)
+    {
+        if (loadingStatusText != null) loadingStatusText.text = status;
+    }
+
     private void SetQualitySettings()
     {
-        // VSync aus PlayerPrefs laden, Standard = 0 (aus)
+        // Load VSync from PlayerPrefs, default = 0 (off)
         int vsyncSetting = PlayerPrefs.GetInt("VSyncEnabled", 0);
         QualitySettings.vSyncCount = vsyncSetting;
 
@@ -93,17 +101,23 @@ public class BootUpdateManager : MonoBehaviour
             {
                 Resolution res = resolutions[resIndex];
                 Screen.SetResolution(res.width, res.height, FullScreenMode.FullScreenWindow, res.refreshRateRatio);
-                UnityEngine.Debug.Log("Aufl�sung geladen aus PlayerPrefs: " + res.width + "x" + res.height);
+                UnityEngine.Debug.Log("Resolution loaded from PlayerPrefs: " + res.width + "x" + res.height);
             }
         }
         else
         {
             Resolution nativeRes = Screen.currentResolution;
             Screen.SetResolution(nativeRes.width, nativeRes.height, true);
-            UnityEngine.Debug.Log("Native Aufl�sung gesetzt: " + nativeRes.width + "x" + nativeRes.height);
+            UnityEngine.Debug.Log("Native resolution set: " + nativeRes.width + "x" + nativeRes.height);
         }
 
-        int fpsIndex = PlayerPrefs.GetInt("FPSCap", 3);
+        int fpsIndex = PlayerPrefs.GetInt("FPSCap", -1);
+        if (fpsIndex == -1)
+        {
+            fpsIndex = 3; // default: 240 FPS
+            PlayerPrefs.SetInt("FPSCap", fpsIndex);
+            PlayerPrefs.Save();
+        }
         int targetFPS = fpsIndex switch
         {
             0 => 30,
@@ -114,7 +128,7 @@ public class BootUpdateManager : MonoBehaviour
             _ => 240
         };
         Application.targetFrameRate = targetFPS;
-        UnityEngine.Debug.Log("FPS Cap aus PlayerPrefs gesetzt auf: " + targetFPS + " FPS");
+        UnityEngine.Debug.Log("FPS cap set from PlayerPrefs: " + targetFPS + " FPS");
     }
 
     IEnumerator CheckForUpdate()
@@ -123,20 +137,22 @@ public class BootUpdateManager : MonoBehaviour
         request.SetRequestHeader("User-Agent", "UnityUpdateChecker");
         yield return request.SendWebRequest();
 
+        if (loadingPanel != null) loadingPanel.SetActive(false);
+
         if (request.result == UnityWebRequest.Result.Success)
         {
             var json = request.downloadHandler.text;
-            UnityEngine.Debug.Log("GitHub API Antwort erhalten: " + json);
+            UnityEngine.Debug.Log("GitHub API response received: " + json);
 
             GitHubRelease latest = JsonUtility.FromJson<GitHubRelease>(json);
 
-            UnityEngine.Debug.Log($"Neueste Version: {latest.tag_name}, Aktuelle Version: {currentVersion}");
+            UnityEngine.Debug.Log($"Latest version: {latest.tag_name}, Current version: {currentVersion}");
 
             if (IsNewerVersion(latest.tag_name, currentVersion) && latest.assets != null && latest.assets.Length > 0)
             {
                 installerUrl = latest.assets[0].browser_download_url;
-                updateText.text = $"Ein neues Update ({latest.tag_name}) ist verf�gbar!";
-                releaseNotesText.text = latest.body; // Release Notes anzeigen
+                updateText.text = $"A new update ({latest.tag_name}) is available!";
+                releaseNotesText.text = latest.body;
                 updatePanel.SetActive(true);
 
                 updateButton.onClick.RemoveAllListeners();
@@ -149,7 +165,7 @@ public class BootUpdateManager : MonoBehaviour
                     LoadNextScene();
                 });
 
-                UnityEngine.Debug.Log("Update-Panel angezeigt");
+                UnityEngine.Debug.Log("Update panel shown");
             }
             else
             {
@@ -167,7 +183,7 @@ public class BootUpdateManager : MonoBehaviour
 
     IEnumerator DownloadAndInstall()
     {
-        updateText.text = "L�dt neue Version, Spiel NICHT manuell schlie�en...";
+        updateText.text = "Downloading new version, do NOT close the game manually...";
         string tempPath = Path.Combine(Path.GetTempPath(), "SMTO_UpdateInstaller.exe");
         installerFilePath = tempPath;
 
@@ -177,7 +193,7 @@ public class BootUpdateManager : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-            UnityEngine.Debug.Log("Installer heruntergeladen, starte Installation...");
+            UnityEngine.Debug.Log("Installer downloaded, starting installation...");
             updateText.text = "Starting installer...";
 
             // Exit fullscreen so the UAC elevation dialog is visible
@@ -199,7 +215,7 @@ public class BootUpdateManager : MonoBehaviour
             }
             catch (System.Exception e)
             {
-                UnityEngine.Debug.LogError("Installer konnte nicht gestartet werden: " + e.Message);
+                UnityEngine.Debug.LogError("Failed to start installer: " + e.Message);
                 updateText.text = "Error starting installer:\n" + e.Message;
                 Screen.fullScreen = true;
                 skipButton.gameObject.SetActive(true);
@@ -207,8 +223,8 @@ public class BootUpdateManager : MonoBehaviour
         }
         else
         {
-            UnityEngine.Debug.LogError("Download fehlgeschlagen: " + request.error);
-            updateText.text = "Download fehlgeschlagen. Bitte Verbindung prüfen.";
+            UnityEngine.Debug.LogError("Download failed: " + request.error);
+            updateText.text = "Download failed. Please check your connection.";
             skipButton.gameObject.SetActive(true);
         }
 
@@ -220,11 +236,11 @@ public class BootUpdateManager : MonoBehaviour
         bool linked = PlayerPrefs.GetInt("PlayerAccountsLinked", 0) == 1;
         if (AuthenticationService.Instance.IsSignedIn && PlayerPrefs.HasKey("Username") && linked)
         {
-            SceneManager.LoadScene("MainMenu");
+            LSS_LoadingScreen.LoadScene("MainMenu");
         }
         else
         {
-            SceneManager.LoadScene("FirstOpen");
+            LSS_LoadingScreen.LoadScene("FirstOpen");
         }
     }
 
@@ -232,7 +248,7 @@ public class BootUpdateManager : MonoBehaviour
     public class GitHubRelease
     {
         public string tag_name;
-        public string body; // Release-Beschreibung
+        public string body;
         public Asset[] assets;
     }
 
@@ -254,7 +270,7 @@ public class BootUpdateManager : MonoBehaviour
             return latestVersion > currentVersion;
         }
 
-        UnityEngine.Debug.LogWarning("Versionsvergleich fehlgeschlagen!");
+        UnityEngine.Debug.LogWarning("Version comparison failed!");
         return false;
     }
 

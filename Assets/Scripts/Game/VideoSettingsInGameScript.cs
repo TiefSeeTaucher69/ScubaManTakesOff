@@ -24,8 +24,7 @@ public class VideoSettingsInGameScript : MonoBehaviour
 
         if (savedIndex == -1)
         {
-            // Noch nichts gespeichert, Standard auf 240 FPS (Index 4)
-            savedIndex = 4;
+            savedIndex = 3; // default: 240 FPS (matches BootScene default)
             PlayerPrefs.SetInt(PlayerPrefsKey, savedIndex);
             PlayerPrefs.Save();
         }
@@ -55,7 +54,7 @@ public class VideoSettingsInGameScript : MonoBehaviour
 
             if (resolutions[i].width == Screen.currentResolution.width &&
                 resolutions[i].height == Screen.currentResolution.height &&
-                resolutions[i].refreshRateRatio.numerator / resolutions[i].refreshRateRatio.denominator == Screen.currentResolution.refreshRate)
+                resolutions[i].refreshRateRatio.numerator / resolutions[i].refreshRateRatio.denominator == Screen.currentResolution.refreshRateRatio.numerator / Screen.currentResolution.refreshRateRatio.denominator)
             {
                 currentResIndex = i;
             }

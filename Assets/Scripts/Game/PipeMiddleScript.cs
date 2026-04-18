@@ -7,8 +7,8 @@ public class PipeMiddleScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        logic = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicScript>();
-        steffReference = GameObject.FindGameObjectWithTag("Steff").GetComponent<SteffScript>();
+        logic = FindFirstObjectByType<LogicScript>();
+        steffReference = FindFirstObjectByType<SteffScript>();
     }
 
     // Update is called once per frame

@@ -14,8 +14,8 @@ public class CannabisCollisionScript : MonoBehaviour
 
     void Start()
     {
-        logic = GameObject.FindGameObjectsWithTag("Logic")[0].GetComponent<LogicScript>();
-        steffReference = GameObject.FindGameObjectWithTag("Steff").GetComponent<SteffScript>();
+        logic = FindFirstObjectByType<LogicScript>();
+        steffReference = FindFirstObjectByType<SteffScript>();
     }
 
     // Update is called once per frame
@@ -32,7 +32,8 @@ public class CannabisCollisionScript : MonoBehaviour
         {
             canTrigger = false;
             logic.addCannabisScore(1);
-            Destroy(gameObject); // Cannabis-Objekt zerst�ren
+            // Destroy root so the CannabisMovementScript on the parent is also removed
+            Destroy(transform.parent != null ? transform.parent.gameObject : gameObject);
         }
     }
 

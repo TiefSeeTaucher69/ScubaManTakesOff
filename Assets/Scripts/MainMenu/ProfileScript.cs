@@ -3,7 +3,7 @@ using TMPro;
 using Unity.Services.Authentication;
 using Unity.Services.Authentication.PlayerAccounts;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using Michsky.LSS;
 using UnityEngine.UI;
 
 public class ProfileScript : MonoBehaviour
@@ -131,6 +131,6 @@ public class ProfileScript : MonoBehaviour
         PlayerPrefs.DeleteKey("Username");
         PlayerPrefs.DeleteKey("PlayerAccountsLinked");
         PlayerPrefs.Save();
-        SceneManager.LoadScene("FirstOpen");
+        LSS_LoadingScreen.LoadScene("FirstOpen");
     }
 }

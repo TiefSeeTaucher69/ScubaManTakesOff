@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Michsky.LSS;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +28,9 @@ public class LogicScript : MonoBehaviour
             steff = FindFirstObjectByType<SteffScript>();
 
         highScore = PlayerPrefs.GetInt("Highscore", 0);
-        leaderboardSenderScript = GameObject.Find("LeaderboardSender").GetComponent<LeaderboardSenderScript>();
+        var lbGO = GameObject.Find("LeaderboardSender");
+        if (lbGO != null) leaderboardSenderScript = lbGO.GetComponent<LeaderboardSenderScript>();
+        if (leaderboardSenderScript == null) Debug.LogWarning("[Logic] LeaderboardSender not found.");
         cannabisStashText.text = PlayerPrefs.GetInt("CannabisStash", 0).ToString();
         collectedLeavesInCurrentRun = 0;
     }
@@ -78,7 +81,7 @@ public class LogicScript : MonoBehaviour
 
     public void restartGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        LSS_LoadingScreen.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void gameOver()
@@ -104,7 +107,8 @@ public class LogicScript : MonoBehaviour
                 istNeuerRekord = true;
                 CloudSaveManager.Instance.SaveInt("RankedHighscore", playerScore);
                 Debug.Log("Neuer Ranked Highscore: " + playerScore);
-                _ = leaderboardSenderScript.SendRankedScore(playerScore);
+                if (leaderboardSenderScript != null)
+                    _ = leaderboardSenderScript.SendRankedScore(playerScore);
             }
             else
             {
@@ -118,7 +122,8 @@ public class LogicScript : MonoBehaviour
                 istNeuerRekord = true;
                 CloudSaveManager.Instance.SaveInt("Highscore", playerScore);
                 Debug.Log("New high score saved: " + playerScore);
-                _ = leaderboardSenderScript.SendScore(playerScore);
+                if (leaderboardSenderScript != null)
+                    _ = leaderboardSenderScript.SendScore(playerScore);
             }
             else
             {
@@ -140,7 +145,7 @@ public class LogicScript : MonoBehaviour
         if (summary != null)
             summary.ZeigeSummary(score, collectedLeaves, runTime, istNeuerRekord, xpGained, oldTotalXP);
 
-        OnRunEnd(score, collectedLeaves, runTime, survived30Seconds);
+        OnRunEnd(score, collectedLeaves, runTime, survived30Seconds, xpGained, oldTotalXP);
 
         SpeedManager.ResetSpeed();
         SpeedManagerCannabisScript.ResetSpeed();
@@ -149,7 +154,7 @@ public class LogicScript : MonoBehaviour
     public void backtoMenu()
     {
         Debug.Log("Going to main menu");
-        SceneManager.LoadScene("MainMenu");
+        LSS_LoadingScreen.LoadScene("MainMenu", "Standard");
         WeeklyMissionManager.Instance?.NotifyMissionsLoaded();
     }
 
@@ -178,17 +183,15 @@ public class LogicScript : MonoBehaviour
         Destroy(iconTransform.gameObject);
     }
 
-    public void OnRunEnd(int score, int collectedLeaves, float runTime, bool survived30Seconds)
+    public void OnRunEnd(int score, int collectedLeaves, float runTime, bool survived30Seconds,
+                         int xpGained = 0, int oldTotalXP = 0)
     {
         Debug.Log($"OnRunEnd called: Score={score}, Leaves={collectedLeaves}, Time={runTime}, Survived30s={survived30Seconds}");
 
         int newTotalScore = PlayerPrefs.GetInt("TotalScore", 0) + score;
         int newTotalRuns  = PlayerPrefs.GetInt("TotalRuns",  0) + 1;
 
-        int oldXP = PlayerPrefs.GetInt("TotalXP", 0);
-        if (XPManager.ShouldMigrate(oldXP, PlayerPrefs.GetInt("TotalScore", 0)))
-            oldXP = XPManager.MigrationGrant(PlayerPrefs.GetInt("TotalScore", 0));
-        int newTotalXP = Mathf.Min(oldXP + XPManager.CalculateRunXP(score, collectedLeaves, runTime), XPManager.XPCap);
+        int newTotalXP = Mathf.Min(oldTotalXP + xpGained, XPManager.XPCap);
 
         CloudSaveManager.Instance.SaveBatch(new Dictionary<string, object>
         {

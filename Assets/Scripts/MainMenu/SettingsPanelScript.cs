@@ -80,7 +80,7 @@ public class SettingsPanelScript : MonoBehaviour
 
     void LadeFPS()
     {
-        int saved = PlayerPrefs.GetInt("FPSCap", 4); // Default: unbegrenzt
+        int saved = PlayerPrefs.GetInt("FPSCap", 3); // Default: 240 FPS
         fpsDropdown.onValueChanged.RemoveAllListeners();
         fpsDropdown.value = saved;
         WendeFPSAn(saved);

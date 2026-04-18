@@ -27,7 +27,7 @@ public class ShieldManager : MonoBehaviour
 
         // Migration: players who owned the old 0/1 flag get 1 free stack
         if (PlayerPrefs.GetInt("HasShieldItem", 0) == 1 && PlayerPrefs.GetInt("ItemCount_Shield", 0) == 0)
-            PlayerPrefs.SetInt("ItemCount_Shield", 1);
+            CloudSaveManager.Instance.SaveInt("ItemCount_Shield", 1);
 
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "Shield";
         bool isEquipped   = !RankedManager.IsRanked

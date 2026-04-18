@@ -29,7 +29,7 @@ public class ResolutionSettingsScript : MonoBehaviour
 
             if (resolutions[i].width == Screen.currentResolution.width &&
                 resolutions[i].height == Screen.currentResolution.height &&
-                resolutions[i].refreshRateRatio.numerator / resolutions[i].refreshRateRatio.denominator == Screen.currentResolution.refreshRate)
+                resolutions[i].refreshRateRatio.numerator / resolutions[i].refreshRateRatio.denominator == Screen.currentResolution.refreshRateRatio.numerator / Screen.currentResolution.refreshRateRatio.denominator)
             {
                 currentResIndex = i;
             }

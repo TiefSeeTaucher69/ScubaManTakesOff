@@ -1,6 +1,5 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
+using Michsky.LSS;
 
 public class EscapeSceneHandlerScript : MonoBehaviour
 {
@@ -22,7 +21,7 @@ public class EscapeSceneHandlerScript : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton1))
         {
-            SceneManager.LoadScene("MainMenu");
+            LSS_LoadingScreen.LoadScene("MainMenu", "Standard");
         }
     }
 

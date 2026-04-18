@@ -23,7 +23,7 @@ public class LaserManager : MonoBehaviour
 
         // Migration: players who owned the old 0/1 flag get 1 free stack
         if (PlayerPrefs.GetInt("HasLaserItem", 0) == 1 && PlayerPrefs.GetInt("ItemCount_Laser", 0) == 0)
-            PlayerPrefs.SetInt("ItemCount_Laser", 1);
+            CloudSaveManager.Instance.SaveInt("ItemCount_Laser", 1);
 
         bool isRankedItem = RankedManager.IsRanked && RankedManager.WeeklyItem == "Laser";
         bool isEquipped   = !RankedManager.IsRanked

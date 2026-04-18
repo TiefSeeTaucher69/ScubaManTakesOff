@@ -13,6 +13,8 @@ public class SpeedManagerCannabisScript : MonoBehaviour
         if (FindObjectsByType<SpeedManagerCannabisScript>(FindObjectsSortMode.None).Length > 1)
             Debug.LogWarning("Mehrere SpeedManager vorhanden - das sollte nicht passieren!");
 
+        SlowMoMultiplier = 1f;
+
         if (RemoteConfigManager.Instance != null)
         {
             startSpeed   = RemoteConfigManager.Instance.LeafSpeedStart;

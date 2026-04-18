@@ -8,9 +8,12 @@ public class TrailManager : MonoBehaviour
 
     private GameObject trailInstance;
     private ParticleSystem trailParticles;
+    private SteffScript _steff;
+    private bool _stopped;
 
     void Start()
     {
+        _steff = FindFirstObjectByType<SteffScript>();
         string activeTrail = PlayerPrefs.GetString("ActiveTrail", "");
 
         // Offset nach links (z.B. -0.5f auf der X-Achse)
@@ -47,7 +50,14 @@ public class TrailManager : MonoBehaviour
 
     void Update()
     {
-        // Trail-Position spiegeln wenn Richtung gewechselt wird
+        if (!_stopped && _steff != null && !_steff.steffIsAlive && trailParticles != null)
+        {
+            trailParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            _stopped = true;
+        }
+
+        if (_stopped) return;
+
         if (trailInstance != null)
         {
             float offsetX = DirectionFlipManager.IsFlipped ? 0.5f : -0.5f;
