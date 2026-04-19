@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "ai-game-developer": {
+      "args": [
+        "port=28116",
+        "plugin-timeout=10000",
+        "client-transport=stdio",
+        "authorization=none"
+      ],
+      "command": "E:/Unity/Tutorial/Tutorial/Library/mcp-server/win-x64/unity-mcp-server.exe"
+    }
+  }
+}
