@@ -1,9 +1,0 @@
-LICENCES
-We use some third party assets so we need to clarify their licenses.
-
-DOTween
-http://dotween.demigiant.com/license.php
-
-Ubuntu Font
-https://fonts.google.com/attribution
-https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
